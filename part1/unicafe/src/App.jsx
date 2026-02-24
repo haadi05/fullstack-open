@@ -6,28 +6,36 @@ const Button = ({ onClick, name }) => {
 
 const StatisticLine = ({ name, value }) => {
   return (
-    <p>
-      {name} {value}
-    </p>
+    <tbody>
+      <tr>
+        <td>{name}</td>
+        <td>{value}</td>
+      </tr>
+    </tbody>
   );
 };
 
 const Statistics = (props) => {
   if (props.all !== 0) {
     return (
-      <div>
-        <StatisticLine name="good" value={props.good} />
-        <StatisticLine name="neutral" value={props.neutral} />
-        <StatisticLine name="bad" value={props.bad} />
-        <StatisticLine name="all" value={props.all} />
-        <StatisticLine
-          name="average"
-          value={
-            (props.good * 1 + props.neutral * 0 + props.bad * -1) / props.all
-          }
-        />
-        <StatisticLine name="positive" value={(props.good * 100) / props.all} />
-      </div>
+      <>
+        <table>
+          <StatisticLine name="good" value={props.good} />
+          <StatisticLine name="neutral" value={props.neutral} />
+          <StatisticLine name="bad" value={props.bad} />
+          <StatisticLine name="all" value={props.all} />
+          <StatisticLine
+            name="average"
+            value={
+              (props.good * 1 + props.neutral * 0 + props.bad * -1) / props.all
+            }
+          />
+          <StatisticLine
+            name="positive"
+            value={(props.good * 100) / props.all}
+          />
+        </table>
+      </>
     );
   } else {
     return <p>No feedback given</p>;
