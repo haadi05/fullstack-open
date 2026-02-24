@@ -13,7 +13,16 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
+  const [voteState, setVoteState] = useState(Array(8).fill(0));
 
+  //Handler function
+  const handleVotes = () => {
+    const copy = [...voteState];
+    copy[selected] += 1;
+    setVoteState(copy);
+  };
+
+  //Random Num Generator
   const getRandomInt = () => {
     return Math.floor(Math.random() * 8);
   };
@@ -21,9 +30,11 @@ const App = () => {
   return (
     <div>
       <p>{anecdotes[selected]}</p>
+      <p>{voteState[selected]} votes</p>
       <button onClick={() => setSelected(getRandomInt())}>
         next anecdotes
       </button>
+      <button onClick={handleVotes}>vote</button>
     </div>
   );
 };
