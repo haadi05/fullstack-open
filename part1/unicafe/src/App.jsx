@@ -4,7 +4,7 @@ const Button = ({ onClick, name }) => {
   return <button onClick={onClick}>{name}</button>;
 };
 
-const Display = ({ name, value }) => {
+const StatisticLine = ({ name, value }) => {
   return (
     <p>
       {name} {value}
@@ -15,19 +15,19 @@ const Display = ({ name, value }) => {
 const Statistics = (props) => {
   if (props.all !== 0) {
     return (
-      <>
-        <Display name="good" value={props.good} />
-        <Display name="neutral" value={props.neutral} />
-        <Display name="bad" value={props.bad} />
-        <Display name="all" value={props.all} />
-        <Display
+      <div>
+        <StatisticLine name="good" value={props.good} />
+        <StatisticLine name="neutral" value={props.neutral} />
+        <StatisticLine name="bad" value={props.bad} />
+        <StatisticLine name="all" value={props.all} />
+        <StatisticLine
           name="average"
           value={
             (props.good * 1 + props.neutral * 0 + props.bad * -1) / props.all
           }
         />
-        <Display name="positive" value={(props.good * 100) / props.all} />
-      </>
+        <StatisticLine name="positive" value={(props.good * 100) / props.all} />
+      </div>
     );
   } else {
     return <p>No feedback given</p>;
