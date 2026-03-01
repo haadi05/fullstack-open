@@ -1,11 +1,10 @@
 import { useState } from "react";
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: 123 },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [search, setSearch] = useState("");
 
   const addPerson = (e) => {
     e.preventDefault();
@@ -27,11 +26,23 @@ const App = () => {
 
   const handleNameInput = (e) => setNewName(e.target.value);
   const handleNumberInput = (e) => setNewNumber(e.target.value);
+  const handleSearch = (e) => setSearch(e.target.value);
+
+  // filter persons based on search query (case-insensitive match)
+  const personstoShow = persons.filter((person) =>
+    person.name.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <div>
+        filter shown with
+        <input value={search} onChange={handleSearch} />
+      </div>
+
       <form onSubmit={addPerson}>
+        <h2>Add</h2>
         <div>
           name: <input value={newName} onChange={handleNameInput} />
         </div>
@@ -42,9 +53,10 @@ const App = () => {
           <button type="submit">add</button>
         </div>
       </form>
+
       <h2>Numbers</h2>
       <ul>
-        {persons.map((person) => {
+        {personstoShow.map((person) => {
           return (
             <li key={person.name}>
               {person.name} {person.number}
