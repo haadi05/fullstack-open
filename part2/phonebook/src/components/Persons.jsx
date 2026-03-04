@@ -5,7 +5,14 @@ const Persons = ({ finalPersonsList, deletePerson }) => {
         return (
           <li key={person.name}>
             {person.name} {person.number}{" "}
-            <button onClick={() => deletePerson(person)}>delete</button>
+            <button
+              onClick={() =>
+                window.confirm(`Delete ${person.name} ?`) &&
+                deletePerson(person)
+              }
+            >
+              delete
+            </button>
           </li>
         );
       })}

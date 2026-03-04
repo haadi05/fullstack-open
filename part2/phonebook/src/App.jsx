@@ -17,35 +17,60 @@ const App = () => {
     });
   }, []);
 
-  // add person
   const addPerson = (e) => {
     e.preventDefault();
-    const check = persons.some((person) => person.name === newName);
-    if (check) {
-      alert(`${newName} is already added to phonebook`);
+
+    const existingPerson = persons.find((person) => person.name === newName);
+
+    if (existingPerson) {
+      const confirmed = window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`,
+      );
+
+      if (!confirmed) return;
+
+      //updating existing person
+      const changedObj = {
+        ...existingPerson,
+        number: newNumber,
+      };
+
+      phonebook.update(existingPerson.id, changedObj).then((returned) => {
+        setPersons(
+          persons.map((person) =>
+            person.id === existingPerson.id ? returned : person,
+          ),
+        );
+      });
     } else {
+      // adding person
       const personObj = {
         name: newName,
         number: newNumber,
       };
-      phonebook.create(personObj).then((returnedPhonebook) => {
-        setPersons(persons.concat(returnedPhonebook));
-        setNewName("");
-        setNewNumber("");
-      });
+
+      phonebook
+        .create(personObj)
+        .then((returned) => {
+          setPersons(persons.concat(returned));
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
   // delete person
   const deletePerson = (person) => {
-    window.confirm(`Delete ${person.name} ?`);
     phonebook
       .del(person.id)
       .then(() => {
         setPersons((prev) => prev.filter((p) => p.id !== person.id));
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
   };
 
