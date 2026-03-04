@@ -15,7 +15,7 @@ const App = () => {
     phonebook.getAll().then((fetchedPhonebook) => {
       setPersons(fetchedPhonebook);
     });
-  }, [persons]);
+  }, []);
 
   // add person
   const addPerson = (e) => {
@@ -42,7 +42,7 @@ const App = () => {
     phonebook
       .del(person.id)
       .then(() => {
-        console.log(`Deleted ${person.name}`);
+        setPersons((prev) => prev.filter((p) => p.id !== person.id));
       })
       .catch((error) => {
         console.log(error);
