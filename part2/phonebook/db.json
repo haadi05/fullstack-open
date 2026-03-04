@@ -24,6 +24,11 @@
       "id": "05d8",
       "name": "Ryan Dahl",
       "number": "3000"
+    },
+    {
+      "id": "d914",
+      "name": "linus torvalds",
+      "number": "-"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

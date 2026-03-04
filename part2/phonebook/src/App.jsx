@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Filter from "./components/Filter";
 import Persons from "./components/Persons";
 import PersonForm from "./components/PersonForm";
-import axios from "axios";
+import phonebook from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,9 +10,10 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
 
+  // get
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((res) => {
-      setPersons(res.data);
+    phonebook.getAll().then((fetchedPhonebook) => {
+      setPersons(fetchedPhonebook);
     });
   }, []);
 
@@ -28,8 +29,9 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
-      axios.post("http://localhost:3001/persons", personObj).then((res) => {
-        setPersons(persons.concat(res.data));
+      // post
+      phonebook.create(personObj).then((returnedPhonebook) => {
+        setPersons(persons.concat(returnedPhonebook));
         setNewName("");
         setNewNumber("");
       });
