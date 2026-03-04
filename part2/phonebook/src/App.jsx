@@ -10,18 +10,17 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
 
-  // get
+  // get persons
   useEffect(() => {
     phonebook.getAll().then((fetchedPhonebook) => {
       setPersons(fetchedPhonebook);
     });
-  }, []);
+  }, [persons]);
 
+  // add person
   const addPerson = (e) => {
     e.preventDefault();
-
     const check = persons.some((person) => person.name === newName);
-
     if (check) {
       alert(`${newName} is already added to phonebook`);
     } else {
@@ -29,7 +28,6 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
-      // post
       phonebook.create(personObj).then((returnedPhonebook) => {
         setPersons(persons.concat(returnedPhonebook));
         setNewName("");
@@ -38,16 +36,29 @@ const App = () => {
     }
   };
 
+  // delete person
+  const deletePerson = (person) => {
+    window.confirm(`Delete ${person.name} ?`);
+    phonebook
+      .del(person.id)
+      .then(() => {
+        console.log(`Deleted ${person.name}`);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const handleNameInput = (e) => setNewName(e.target.value);
   const handleNumberInput = (e) => setNewNumber(e.target.value);
   const handleSearch = (e) => setSearch(e.target.value);
 
   // filter persons based on search query (case-insensitive)
-  const personstoShow = persons.filter((person) =>
+  const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const finalPersonsList = search === "" ? persons : personstoShow;
+  const finalPersonsList = search === "" ? persons : filteredPersons;
 
   return (
     <div>
@@ -63,7 +74,10 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons finalPersonsList={finalPersonsList} />
+      <Persons
+        finalPersonsList={finalPersonsList}
+        deletePerson={deletePerson}
+      />
     </div>
   );
 };
