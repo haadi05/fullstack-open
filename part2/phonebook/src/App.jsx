@@ -3,13 +3,14 @@ import Filter from "./components/Filter";
 import Persons from "./components/Persons";
 import PersonForm from "./components/PersonForm";
 import phonebook from "./services/phonebook";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
-
+  const [greetUser, setGreetUser] = useState("");
   // get persons
   useEffect(() => {
     phonebook.getAll().then((fetchedPhonebook) => {
@@ -55,6 +56,8 @@ const App = () => {
           setPersons(persons.concat(returned));
           setNewName("");
           setNewNumber("");
+          setGreetUser(`Added ${returned.name}`);
+          setTimeout(() => setGreetUser(""), 2000);
         })
         .catch((err) => {
           console.log(err);
@@ -88,6 +91,15 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      {greetUser !== "" ? (
+        <div>
+          <Notification message={greetUser} />
+        </div>
+      ) : (
+        <div></div>
+      )}
+
       <Filter search={search} handleSearch={handleSearch} />
 
       <PersonForm
