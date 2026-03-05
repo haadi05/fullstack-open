@@ -10,7 +10,9 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
-  const [greetUser, setGreetUser] = useState("");
+  const [message, setMessage] = useState("");
+  const [alertToggle, setAlertToggle] = useState(true);
+
   // get persons
   useEffect(() => {
     phonebook.getAll().then((fetchedPhonebook) => {
@@ -36,13 +38,22 @@ const App = () => {
         number: newNumber,
       };
 
-      phonebook.update(existingPerson.id, changedObj).then((returned) => {
-        setPersons(
-          persons.map((person) =>
-            person.id === existingPerson.id ? returned : person,
-          ),
-        );
-      });
+      phonebook
+        .update(existingPerson.id, changedObj)
+        .then((returned) => {
+          setPersons(
+            persons.map((person) =>
+              person.id === existingPerson.id ? returned : person,
+            ),
+          );
+        })
+        .catch((err) => {
+          setAlertToggle(false);
+          setMessage(
+            `Information of ${newName} has already been removed from server`,
+          );
+          setTimeout(() => setMessage(""), 3000);
+        });
     } else {
       // adding person
       const personObj = {
@@ -56,8 +67,9 @@ const App = () => {
           setPersons(persons.concat(returned));
           setNewName("");
           setNewNumber("");
-          setGreetUser(`Added ${returned.name}`);
-          setTimeout(() => setGreetUser(""), 2000);
+          setAlertToggle(true);
+          setMessage(`Added ${returned.name}`);
+          setTimeout(() => setMessage(""), 2000);
         })
         .catch((err) => {
           console.log(err);
@@ -92,9 +104,9 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
-      {greetUser !== "" ? (
+      {message !== "" ? (
         <div>
-          <Notification message={greetUser} />
+          <Notification message={message} alertToggle={alertToggle} />
         </div>
       ) : (
         <div></div>
