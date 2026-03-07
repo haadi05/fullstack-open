@@ -1,6 +1,6 @@
 import Country from "./Country";
 
-const Result = ({ countries, search }) => {
+const Result = ({ countries, search, setSearch }) => {
   const result = countries.filter((country) => {
     return country.name.common.toLowerCase().includes(search.toLowerCase());
   });
@@ -23,7 +23,18 @@ const Result = ({ countries, search }) => {
     return (
       <div>
         {result.map((result) => {
-          return <p key={result.name.common}>{result.name.common}</p>;
+          return (
+            <div key={result.cca3} className="list">
+              <p>{result.name.common}</p>{" "}
+              <button
+                onClick={() => {
+                  setSearch(result.name.common);
+                }}
+              >
+                show
+              </button>
+            </div>
+          );
         })}
       </div>
     );

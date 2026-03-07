@@ -2,3 +2,7 @@ p {
   padding: 0px;
   margin: 0px;
 }
+.list {
+  display: flex;
+  gap: 4px;
+}

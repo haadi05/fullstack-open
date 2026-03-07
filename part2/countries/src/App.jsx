@@ -18,7 +18,7 @@ const App = () => {
   return (
     <div>
       <Search search={search} handleSearch={handleSearch} />
-      <Result countries={countries} search={search} />
+      <Result countries={countries} search={search} setSearch={setSearch} />
     </div>
   );
 };

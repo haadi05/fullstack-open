@@ -10,7 +10,7 @@ const Country = ({ result }) => {
           return <li key={language}>{language}</li>;
         })}
       </ul>
-      <img src={result.flags.png} alt={result.name.common} />
+      <img src={result.flags.png} alt={result.flags.alt} />
     </div>
   );
 };
