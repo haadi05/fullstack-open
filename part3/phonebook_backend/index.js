@@ -29,6 +29,15 @@ app.get("/api/persons", (req, res) => {
   res.json(persons);
 });
 
+app.get("/info", (req, res) => {
+  const size = persons.length;
+  const date = new Date().toString();
+  res.send(`
+    <p>Phonebook has info for ${size} people</p>
+    <p>${date}</p>
+    `);
+});
+
 app.get("/", (req, res) => {
   res.send("Server Instance");
 });
