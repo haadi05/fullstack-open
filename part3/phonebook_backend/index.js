@@ -25,6 +25,8 @@ let persons = [
   },
 ];
 
+app.use(express.json());
+
 app.get("/api/persons", (req, res) => {
   res.json(persons);
 });
@@ -46,6 +48,18 @@ app.get("/info", (req, res) => {
     <p>Phonebook has info for ${size} people</p>
     <p>${date}</p>
     `);
+});
+
+app.post("/api/persons", (req, res) => {
+  const maxId =
+    persons.length > 0
+      ? Math.max(...persons.map((person) => Number(person.id)))
+      : 0;
+
+  const person = req.body;
+  person.id = String(maxId + 1);
+  persons = persons.concat(person);
+  res.json(person);
 });
 
 app.delete("/api/persons/:id", (req, res) => {
