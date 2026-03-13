@@ -50,14 +50,37 @@ app.get("/info", (req, res) => {
     `);
 });
 
-app.post("/api/persons", (req, res) => {
+const generateId = () => {
   const maxId =
     persons.length > 0
       ? Math.max(...persons.map((person) => Number(person.id)))
       : 0;
+  return String(maxId + 1);
+};
 
-  const person = req.body;
-  person.id = String(maxId + 1);
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+
+  if (!body.name) {
+    return res.status(400).json({ error: "missing Name" });
+  }
+
+  if (!body.number) {
+    return res.status(400).json({ error: "missing Number" });
+  }
+
+  const exists = persons.find((person) => person.name === body.name);
+
+  if (exists) {
+    return res.status(400).json({ error: "name must be unique" });
+  }
+
+  const person = {
+    id: generateId(),
+    name: body.name,
+    number: body.number,
+  };
+
   persons = persons.concat(person);
   res.json(person);
 });
