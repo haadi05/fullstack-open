@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const morgan = require("morgan");
 const port = 3001;
 
@@ -27,6 +28,8 @@ let persons = [
 ];
 
 app.use(express.json());
+
+app.use(cors());
 
 morgan.token("person", function (req, res) {
   return JSON.stringify(req.body);
