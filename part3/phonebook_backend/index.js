@@ -28,7 +28,11 @@ let persons = [
 
 app.use(express.json());
 
-app.use(morgan("tiny"));
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :person",
+  ),
+);
 
 app.get("/api/persons", (req, res) => {
   res.json(persons);
@@ -83,6 +87,10 @@ app.post("/api/persons", (req, res) => {
     name: body.name,
     number: body.number,
   };
+
+  morgan.token("person", function (req, res) {
+    return JSON.stringify(person);
+  });
 
   persons = persons.concat(person);
   res.json(person);
