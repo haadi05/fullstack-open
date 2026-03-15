@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
-const port = 3001;
 
 let persons = [
   {
@@ -108,6 +107,8 @@ app.delete("/api/persons/:id", (req, res) => {
 app.get("/", (req, res) => {
   res.send("Server Instance");
 });
+
+const port = process.env.PORT || 3001;
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
