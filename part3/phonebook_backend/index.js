@@ -17,7 +17,6 @@ app.use(
 
 // routes
 app.get("/api/persons", (req, res) => {
-  console.log(Person);
   Person.find({}).then((persons) => res.json(persons));
 });
 
