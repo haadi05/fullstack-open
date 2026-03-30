@@ -21,14 +21,21 @@ app.get("/api/persons", (req, res) => {
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  Person.findById(req.params.id).then((person) => {
-    res.json(person);
-  });
+  Person.findById(req.params.id)
+    .then((person) => {
+      if (!person) {
+        return res.status(404).end();
+      }
+      res.json(person);
+    })
+    .catch((error) => next(error));
 });
 
-app.get("/info", (req, res) => {
-  const size = Person.length;
+app.get("/info", async (req, res) => {
+  const persons = await Person.find({});
+  const size = persons.length;
   const date = new Date().toString();
+
   res.send(`
     <p>Phonebook has info for ${size} people</p>
     <p>${date}</p>
@@ -83,6 +90,7 @@ app.get("/", (req, res) => {
 });
 
 // error handling
+
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
 
@@ -91,7 +99,6 @@ const errorHandler = (error, request, response, next) => {
   }
   next(error);
 };
-
 app.use(errorHandler);
 
 const port = process.env.PORT || 3001;
