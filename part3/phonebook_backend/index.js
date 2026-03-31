@@ -8,7 +8,7 @@ const Person = require("./models/person.js");
 app.use(express.static("dist"));
 app.use(express.json());
 
-morgan.token("person", function (req, res) {
+morgan.token("person", function (req) {
   return JSON.stringify(req.body);
 });
 app.use(
@@ -20,7 +20,7 @@ app.get("/api/persons", (req, res) => {
   Person.find({}).then((persons) => res.json(persons));
 });
 
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   Person.findById(req.params.id)
     .then((person) => {
       if (!person) {
