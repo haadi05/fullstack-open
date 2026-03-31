@@ -69,10 +69,11 @@ const App = () => {
           setNewNumber("");
           setAlertToggle(true);
           setMessage(`Added ${returned.name}`);
-          setTimeout(() => setMessage(""), 2000);
         })
         .catch((err) => {
-          console.log(err);
+          setAlertToggle(false);
+          setMessage(err.response.data.error);
+          setTimeout(() => setMessage(""), 2000);
         });
     }
   };
