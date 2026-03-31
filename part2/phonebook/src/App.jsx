@@ -69,6 +69,7 @@ const App = () => {
           setNewNumber("");
           setAlertToggle(true);
           setMessage(`Added ${returned.name}`);
+          setTimeout(() => setMessage(""), 2000);
         })
         .catch((err) => {
           setAlertToggle(false);
