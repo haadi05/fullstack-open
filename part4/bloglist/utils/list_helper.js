@@ -23,6 +23,26 @@ const favoriteBlog = (blogs) => {
   return favBlogsList[0];
 };
 
+const mostBlogs = (blogs) => {
+  const authors = blogs.map((blog) => blog.author);
+  let obj = {};
+
+  authors.forEach((element) => {
+    obj[element] ? (obj[element] += 1) : (obj[element] = 1);
+  });
+
+  const numOfBlogs = Object.values(obj);
+  const maxNumOfBlogs = Math.max(...numOfBlogs);
+  const authorWithMostBlogs = Object.keys(obj).find(
+    (name) => obj[name] === maxNumOfBlogs,
+  );
+
+  return {
+    author: authorWithMostBlogs,
+    blogs: maxNumOfBlogs,
+  };
+};
+
 const blogs = [
   {
     _id: "5a422a851b54a676234d17f7",
@@ -45,7 +65,7 @@ const blogs = [
     title: "Canonical string reduction",
     author: "Edsger W. Dijkstra",
     url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-    likes: 2,
+    likes: 12,
     __v: 0,
   },
   {
@@ -61,7 +81,7 @@ const blogs = [
     title: "TDD harms architecture",
     author: "Robert C. Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
-    likes: 12,
+    likes: 0,
     __v: 0,
   },
   {
@@ -69,28 +89,31 @@ const blogs = [
     title: "Type wars",
     author: "Robert C. Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-    likes: 12,
+    likes: 2,
     __v: 0,
   },
 ];
 
-const mostBlogs = (blogs) => {
-  const authors = blogs.map((blog) => blog.author);
+const mostLikes = (blogs) => {
   let obj = {};
 
-  authors.forEach((element) => {
-    obj[element] ? (obj[element] += 1) : (obj[element] = 1);
+  blogs.forEach((blog) => {
+    if (!obj[blog.author]) {
+      obj[blog.author] = blog.likes;
+    } else {
+      obj[blog.author] += blog.likes;
+    }
   });
 
-  const numOfBlogs = Object.values(obj);
-  const maxNumOfBlogs = Math.max(...numOfBlogs);
-  const authorWithMostBlogs = Object.keys(obj).find(
-    (name) => obj[name] === maxNumOfBlogs,
+  const likesArray = Object.values(obj);
+  const highestLikes = Math.max(...likesArray);
+  const authorWithMostLikes = Object.keys(obj).find(
+    (author) => obj[author] === highestLikes,
   );
 
   return {
-    author: authorWithMostBlogs,
-    blogs: maxNumOfBlogs,
+    author: authorWithMostLikes,
+    likes: highestLikes,
   };
 };
 
@@ -99,4 +122,5 @@ module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };
