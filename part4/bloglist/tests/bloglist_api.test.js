@@ -23,6 +23,21 @@ test("unique identifier property of blog posts is named id", async () => {
   assert.strictEqual("id" in response.body[0], true);
 });
 
+test("a blog post can be added", async () => {
+  const newBlog = {
+    id: "5a422bc61b54a676234d17fc",
+    title: "Type wars",
+    author: "Robert C. Martin",
+    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+    likes: 3,
+  };
+
+  await api.post("/api/blogs").send(newBlog);
+
+  const blogsAfterPost = await helper.blogsFromDb();
+  assert.strictEqual(blogsAfterPost.length, helper.initialBlogs.length + 1);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
