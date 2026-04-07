@@ -38,7 +38,7 @@ test("a blog post can be added", async () => {
   assert.strictEqual(blogsAfterPost.length, helper.initialBlogs.length + 1);
 });
 
-test.only("likes defaults to 0 if its missing", async () => {
+test("likes defaults to 0 if its missing", async () => {
   const newBlog = {
     id: "3a422bc61b54a676234d17fr",
     title: "Documentation",
@@ -50,6 +50,18 @@ test.only("likes defaults to 0 if its missing", async () => {
 
   assert.strictEqual("likes" in response.body, true);
   assert.strictEqual(response.body.likes, 0);
+});
+
+test.only("backend responds with 400 Bad Request if title or url dont exist", async () => {
+  const newBlog = {
+    id: "3a422bc63b54a676234d17fr",
+    author: "Lee Robinson",
+    likes: 5,
+  };
+
+  const response = await api.post("/api/blogs").send(newBlog);
+
+  assert.strictEqual(response.status, 400);
 });
 
 after(async () => {
