@@ -38,6 +38,20 @@ test("a blog post can be added", async () => {
   assert.strictEqual(blogsAfterPost.length, helper.initialBlogs.length + 1);
 });
 
+test.only("likes defaults to 0 if its missing", async () => {
+  const newBlog = {
+    id: "3a422bc61b54a676234d17fr",
+    title: "Documentation",
+    author: "Lee Robinson",
+    url: "https://leerob.com/docs",
+  };
+
+  const response = await api.post("/api/blogs").send(newBlog);
+
+  assert.strictEqual("likes" in response.body, true);
+  assert.strictEqual(response.body.likes, 0);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
