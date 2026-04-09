@@ -52,7 +52,7 @@ test("likes defaults to 0 if its missing", async () => {
   assert.strictEqual(response.body.likes, 0);
 });
 
-test.only("backend responds with 400 Bad Request if title or url dont exist", async () => {
+test("backend responds with 400 Bad Request if title or url dont exist", async () => {
   const newBlog = {
     id: "3a422bc63b54a676234d17fr",
     author: "Lee Robinson",
@@ -62,6 +62,14 @@ test.only("backend responds with 400 Bad Request if title or url dont exist", as
   const response = await api.post("/api/blogs").send(newBlog);
 
   assert.strictEqual(response.status, 400);
+});
+
+test.only("a blog can be deleted", async () => {
+  const blogs = await helper.blogsFromDb();
+  const id = blogs[0].id;
+
+  const response = await api.delete(`/api/blogs/${id}`);
+  assert.strictEqual(response.status, 204);
 });
 
 after(async () => {
