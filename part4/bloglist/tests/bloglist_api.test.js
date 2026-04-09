@@ -64,12 +64,26 @@ test("backend responds with 400 Bad Request if title or url dont exist", async (
   assert.strictEqual(response.status, 400);
 });
 
-test.only("a blog can be deleted", async () => {
+test("a blog can be deleted", async () => {
   const blogs = await helper.blogsFromDb();
   const id = blogs[0].id;
 
   const response = await api.delete(`/api/blogs/${id}`);
-  assert.strictEqual(response.status, 204);
+  const blogsAfterPost = await helper.blogsFromDb();
+
+  assert.strictEqual(blogsAfterPost.length, helper.initialBlogs.length - 1);
+});
+
+test.only("a blog can update", async () => {
+  const updatedBlog = {
+    likes: 8,
+  };
+  const blogs = await helper.blogsFromDb();
+  const id = blogs[0].id;
+  const response = await api.put(`/api/blogs/${id}`).send(updatedBlog);
+
+  assert.notStrictEqual(response.body.likes, blogs[0].likes);
+  assert.strictEqual(response.status, 200);
 });
 
 after(async () => {
