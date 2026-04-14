@@ -8,19 +8,40 @@ userRouter.get("/", async (request, response) => {
 });
 
 userRouter.post("/", async (request, response) => {
-  const { username, name, password } = request.body;
+  try {
+    const { username, name, password } = request.body;
 
-  const saltRounds = 10;
-  const passwordHash = await bcrypt.hash(password, saltRounds);
+    if (!password || !username) {
+      return response
+        .status(400)
+        .json({ error: "password or username is missing" });
+    }
 
-  const user = new User({
-    username,
-    name,
-    passwordHash,
-  });
+    if (password.length < 3 || username.length < 3) {
+      return response
+        .status(400)
+        .json({ error: "minimum password & username length is 3" });
+    }
 
-  const savedUser = await user.save();
-  response.status(201).json(savedUser);
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+
+    const user = new User({
+      username,
+      name,
+      passwordHash,
+    });
+
+    const savedUser = await user.save();
+    response.status(201).json(savedUser);
+  } catch (error) {
+    if (
+      error.name === "MongoServerError" &&
+      error.message.includes("E11000 duplicate key error")
+    ) {
+      return response.status(400).json({ error: "username must be unique" });
+    }
+  }
 });
 
 module.exports = userRouter;
