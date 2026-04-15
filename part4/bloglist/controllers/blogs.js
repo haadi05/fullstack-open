@@ -1,6 +1,7 @@
 const Blog = require("../models/blog");
 const User = require("../models/user");
 const blogsRouter = require("express").Router();
+const jwt = require("jsonwebtoken");
 
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", {
@@ -11,31 +12,51 @@ blogsRouter.get("/", async (request, response) => {
   response.json(blogs);
 });
 
+const getTokenFrom = (request) => {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    return authorization.replace("Bearer ", "");
+  }
+  return null;
+};
+
 blogsRouter.post("/", async (request, response) => {
-  const blog = new Blog(request.body);
+  try {
+    const blog = new Blog(request.body);
 
-  const user = await User.findById(request.body.userId);
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET);
+    if (!decodedToken) {
+      return response.status(401).json({ error: "token invalid" });
+    }
 
-  if (!user) {
-    return response.status(400).json({ error: "user missing or invalid" });
-  } else {
-    blog["user"] = user.id;
+    //using userID from return obj by jwt.verify
+    const user = await User.findById(decodedToken.id);
+
+    if (!user) {
+      return response.status(400).json({ error: "user missing or invalid" });
+    } else {
+      blog["user"] = user.id;
+    }
+
+    if (!blog.likes) {
+      blog["likes"] = 0;
+    }
+
+    if (!blog.title || !blog.url) {
+      response.status(400).end();
+    }
+
+    const savedBlog = await blog.save();
+
+    user.blogs = user.blogs.concat(savedBlog.id);
+    await user.save();
+
+    response.status(201).json(savedBlog);
+  } catch (error) {
+    if (error.name === "JsonWebTokenError") {
+      return response.status(401).json({ error: "token invalid" });
+    }
   }
-
-  if (!blog.likes) {
-    blog["likes"] = 0;
-  }
-
-  if (!blog.title || !blog.url) {
-    response.status(400).end();
-  }
-
-  const savedBlog = await blog.save();
-
-  user.blogs = user.blogs.concat(savedBlog.id);
-  await user.save();
-
-  response.status(201).json(savedBlog);
 });
 
 blogsRouter.delete("/:id", async (request, response) => {
