@@ -12,5 +12,5 @@ development.
 | [1](./part1/) |  Done   |   14/14   |
 | [2](./part2/) |  Done   |   20/20   |
 | [3](./part3/) |  Done   |   22/22   |
-| [4](./part4/) |  Done   |   16/23   |
+| [4](./part4/) |  Done   |   22/23   |
 | [5](./part5/) | Pending |   0/23    |
