@@ -2,7 +2,9 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 const blogsRouter = require("express").Router();
 const jwt = require("jsonwebtoken");
+const { userExtractor } = require("../utils/middleware");
 
+//read
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", {
     username: 1,
@@ -12,17 +14,11 @@ blogsRouter.get("/", async (request, response) => {
   response.json(blogs);
 });
 
-blogsRouter.post("/", async (request, response, next) => {
+//create
+blogsRouter.post("/", userExtractor, async (request, response, next) => {
   try {
     const blog = new Blog(request.body);
-
-    const decodedToken = jwt.verify(request.token, process.env.SECRET);
-    if (!decodedToken) {
-      return response.status(401).json({ error: "token invalid" });
-    }
-
-    //using userID from return obj by jwt.verify
-    const user = await User.findById(decodedToken.id);
+    const user = request.user;
 
     if (!user) {
       return response.status(400).json({ error: "user missing or invalid" });
@@ -51,21 +47,19 @@ blogsRouter.post("/", async (request, response, next) => {
   }
 });
 
-blogsRouter.delete("/:id", async (request, response) => {
+//delete
+blogsRouter.delete("/:id", userExtractor, async (request, response) => {
   try {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET);
-    if (!decodedToken) {
-      return response.status(401).json({ error: "token invalid" });
-    }
+    const user = request.user;
 
-    const result = await Blog.findById(request.params.id);
-    const UserIdFromBlog = result.user._id.toString();
+    const BlogfromUrl = await Blog.findById(request.params.id);
+    const BlogCreatorId = BlogfromUrl.user.toString();
 
-    if (UserIdFromBlog !== decodedToken.id) {
+    if (BlogCreatorId !== user.id) {
       return response.status(401).json({ error: "unauthorized user" });
     }
 
-    await Blog.findByIdAndDelete(result.id);
+    await Blog.findByIdAndDelete(BlogfromUrl.id);
     response.status(204).end();
   } catch (error) {
     if (error.name === "JsonWebTokenError") {
@@ -74,6 +68,7 @@ blogsRouter.delete("/:id", async (request, response) => {
   }
 });
 
+//update
 blogsRouter.put("/:id", async (request, response) => {
   const blog = await Blog.findById(request.params.id);
   blog.likes = request.body.likes;
