@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import loginService from "../services/blogs";
 
-const AddBlog = ({ blogs, setBlogs }) => {
+const AddBlog = ({ blogs, setBlogs, setNotification }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -12,6 +12,10 @@ const AddBlog = ({ blogs, setBlogs }) => {
       .post({ title, author, url })
       .then((returnedBlog) => {
         setBlogs(blogs.concat(returnedBlog));
+        setNotification(`a new blog ${title} by ${author} added`);
+        setTimeout(() => {
+          setNotification("");
+        }, 3000);
         setTitle("");
         setAuthor("");
         setUrl("");

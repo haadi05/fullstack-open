@@ -3,12 +3,15 @@ import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import AddBlog from "./components/AddBlog";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [notification, setNotification] = useState("");
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -32,7 +35,12 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (error) {
-      console.error(error);
+      if (error.toString().includes("401")) {
+        setErrorMsg("wrong username or password");
+        setTimeout(() => {
+          setErrorMsg("");
+        }, 3000);
+      }
     }
   };
 
@@ -40,6 +48,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
+        <Notification notification={notification} errorMsg={errorMsg} />
         <form onSubmit={handleLogin}>
           <div>
             <label>
@@ -73,6 +82,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification notification={notification} errorMsg={errorMsg} />
 
       <p>
         {user.username} logged in
@@ -86,7 +96,11 @@ const App = () => {
         </button>
       </p>
 
-      <AddBlog blogs={blogs} setBlogs={setBlogs} />
+      <AddBlog
+        blogs={blogs}
+        setBlogs={setBlogs}
+        setNotification={setNotification}
+      />
 
       <br />
       {blogs.map((blog) => (
