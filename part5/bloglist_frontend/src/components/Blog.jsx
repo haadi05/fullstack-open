@@ -17,13 +17,9 @@ const Blog = ({ blog, blogsArray, setBlogsArray }) => {
 
     blogService.update(updatedBlog);
 
-    const newBlogsArray = blogsArray.map((blog) => {
-      if (blog.id === updatedBlog.id) {
-        return updatedBlog;
-      } else {
-        return blog;
-      }
-    });
+    const newBlogsArray = blogsArray.map((blog) =>
+      blog.id === updatedBlog.id ? updatedBlog : blog,
+    );
 
     setBlogsArray(newBlogsArray);
   };
