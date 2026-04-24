@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import loginService from "../services/blogs";
 
-const AddBlog = ({ blogs, setBlogs, setNotification }) => {
+const AddBlog = ({ blogs, setBlogs, setNotification, togglableRef }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
   const addBlogHandler = (event) => {
     event.preventDefault();
+    togglableRef.current.toggleVisibility();
     loginService
       .post({ title, author, url })
       .then((returnedBlog) => {
