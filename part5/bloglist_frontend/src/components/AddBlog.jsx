@@ -24,7 +24,7 @@ const AddBlog = ({ blogs, setBlogs, setNotification, togglableRef }) => {
       .catch((error) => console.error("error: ", error));
   };
   return (
-    <>
+    <div>
       <h2>create new</h2>
       <form onSubmit={addBlogHandler}>
         <div>
@@ -57,7 +57,7 @@ const AddBlog = ({ blogs, setBlogs, setNotification, togglableRef }) => {
         </div>
         <button type="submit">create</button>
       </form>
-    </>
+    </div>
   );
 };
 
