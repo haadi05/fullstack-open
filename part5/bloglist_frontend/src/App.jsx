@@ -46,7 +46,6 @@ const App = () => {
   };
 
   const togglableRef = useRef();
-  // const addBlogRef = useRef();
 
   if (user === null) {
     return (
@@ -109,14 +108,16 @@ const App = () => {
       </Togglable>
 
       <br />
-      {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          blogsArray={blogs}
-          setBlogsArray={setBlogs}
-        />
-      ))}
+      {blogs
+        .sort((a, b) => b.likes - a.likes)
+        .map((blog) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            blogsArray={blogs}
+            setBlogsArray={setBlogs}
+          />
+        ))}
     </div>
   );
 };
