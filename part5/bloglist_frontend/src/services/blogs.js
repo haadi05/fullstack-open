@@ -18,4 +18,8 @@ const post = (blog) => {
   return request.then((response) => response.data);
 };
 
-export default { getAll, post, setToken };
+const update = (updatedBlog) => {
+  const request = axios.put(`${baseUrl}/${updatedBlog.id}`, updatedBlog);
+  return request.then((response) => response.data);
+};
+export default { getAll, post, update, setToken };

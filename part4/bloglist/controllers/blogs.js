@@ -71,6 +71,10 @@ blogsRouter.delete("/:id", userExtractor, async (request, response) => {
 //update
 blogsRouter.put("/:id", async (request, response) => {
   const blog = await Blog.findById(request.params.id);
+
+  blog.title = request.body.title;
+  blog.author = request.body.author;
+  blog.url = request.body.url;
   blog.likes = request.body.likes;
 
   const updatedBlog = await blog.save();
