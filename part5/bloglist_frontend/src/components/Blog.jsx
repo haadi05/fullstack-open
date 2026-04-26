@@ -1,7 +1,7 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
 
-const Blog = ({ blog, blogsArray, setBlogsArray }) => {
+const Blog = ({ blog, user, blogsArray, setBlogsArray }) => {
   const [toggleFullView, setToggleFullView] = useState(false);
 
   const handleLikeUpdate = (event) => {
@@ -24,6 +24,19 @@ const Blog = ({ blog, blogsArray, setBlogsArray }) => {
     setBlogsArray(newBlogsArray);
   };
 
+  const handleDeleteBlog = (event) => {
+    event.preventDefault();
+
+    const confirmed = window.confirm("delete this blog?");
+    if (confirmed) {
+      blogService.del(blog.id);
+    }
+
+    const blogsArrayAfterDel = blogsArray.filter((b) => b.id !== blog.id);
+
+    setBlogsArray(blogsArrayAfterDel);
+  };
+
   return (
     <div style={{ margin: "8px", padding: "4px", border: "1px solid black" }}>
       {toggleFullView ? (
@@ -36,6 +49,14 @@ const Blog = ({ blog, blogsArray, setBlogsArray }) => {
           likes {blog.likes} <button onClick={handleLikeUpdate}>like</button>
           <br />
           {blog.author}
+          <br />
+          {user.username === blog.user.username ? (
+            <button style={{ color: "red" }} onClick={handleDeleteBlog}>
+              delete
+            </button>
+          ) : (
+            <div></div>
+          )}
         </div>
       ) : (
         <div>

@@ -22,4 +22,13 @@ const update = (updatedBlog) => {
   const request = axios.put(`${baseUrl}/${updatedBlog.id}`, updatedBlog);
   return request.then((response) => response.data);
 };
-export default { getAll, post, update, setToken };
+
+const del = (blogId) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  const request = axios.delete(`${baseUrl}/${blogId}`, config);
+  return request.then((response) => response.data);
+};
+
+export default { getAll, post, update, del, setToken };
