@@ -52,7 +52,7 @@ const Blog = ({ blog, user, blogsArray, setBlogsArray }) => {
   return (
     <div style={{ margin: "8px", padding: "4px", border: "1px solid black" }}>
       {toggleFullView ? (
-        <div>
+        <div className="fullView">
           {blog.title} by {blog.author}
           <button onClick={() => setToggleFullView(false)}>hide</button>
           <br />
@@ -65,7 +65,7 @@ const Blog = ({ blog, user, blogsArray, setBlogsArray }) => {
           {verifyForDeletion()}
         </div>
       ) : (
-        <div>
+        <div className="partialView">
           {blog.title} by {blog.author}
           <button onClick={() => setToggleFullView(true)}>show</button>
         </div>
