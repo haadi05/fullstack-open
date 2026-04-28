@@ -15,7 +15,11 @@ const App = () => {
   const [notification, setNotification] = useState("");
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    const getBlogs = async () => {
+      const fetchedBlogs = await blogService.getAll();
+      setBlogs(fetchedBlogs);
+    };
+    getBlogs();
   }, []);
 
   useEffect(() => {
@@ -32,6 +36,7 @@ const App = () => {
     try {
       const user = await loginService.login({ username, password });
       window.localStorage.setItem("loggedInUser", JSON.stringify(user));
+      blogService.setToken(user.token);
       setUser(user);
       setUsername("");
       setPassword("");

@@ -36,10 +36,16 @@ blogsRouter.post("/", userExtractor, async (request, response, next) => {
 
     const savedBlog = await blog.save();
 
+    const populatedBlog = await savedBlog.populate("user", {
+      username: 1,
+      name: 1,
+      id: 1,
+    });
+
     user.blogs = user.blogs.concat(savedBlog.id);
     await user.save();
 
-    response.status(201).json(savedBlog);
+    response.status(201).json(populatedBlog);
   } catch (error) {
     if (error.name === "JsonWebTokenError") {
       return response.status(401).json({ error: "token invalid" });
@@ -76,6 +82,7 @@ blogsRouter.put("/:id", async (request, response) => {
   blog.author = request.body.author;
   blog.url = request.body.url;
   blog.likes = request.body.likes;
+  blog.user = request.body.user.id;
 
   const updatedBlog = await blog.save();
   response.status(200).json(updatedBlog);

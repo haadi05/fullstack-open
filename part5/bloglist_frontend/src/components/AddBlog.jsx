@@ -1,28 +1,32 @@
 import React, { useState } from "react";
-import loginService from "../services/blogs";
+import blogService from "../services/blogs";
 
 const AddBlog = ({ blogs, setBlogs, setNotification, togglableRef }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
-  const addBlogHandler = (event) => {
+  const addBlogHandler = async (event) => {
     event.preventDefault();
     togglableRef.current.toggleVisibility();
-    loginService
-      .post({ title, author, url })
-      .then((returnedBlog) => {
-        setBlogs(blogs.concat(returnedBlog));
-        setNotification(`a new blog ${title} by ${author} added`);
-        setTimeout(() => {
-          setNotification("");
-        }, 3000);
-        setTitle("");
-        setAuthor("");
-        setUrl("");
-      })
-      .catch((error) => console.error("error: ", error));
+
+    try {
+      const returnedBlog = await blogService.post({ title, author, url });
+      setBlogs(blogs.concat(returnedBlog));
+
+      setNotification(`a new blog ${title} by ${author} added`);
+      setTimeout(() => {
+        setNotification("");
+      }, 3000);
+
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+    } catch (error) {
+      console.error("error: ", error);
+    }
   };
+
   return (
     <div>
       <h2>create new</h2>
