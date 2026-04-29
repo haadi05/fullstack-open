@@ -1,43 +1,8 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
 
-const Blog = ({ blog, user, blogsArray, setBlogsArray }) => {
+const Blog = ({ blog, user, handleLikeUpdate, handleDeleteBlog }) => {
   const [toggleFullView, setToggleFullView] = useState(false);
-
-  const handleLikeUpdate = (event) => {
-    event.preventDefault();
-
-    const updatedBlog = {
-      title: blog.title,
-      url: blog.url,
-      author: blog.author,
-      likes: blog.likes + 1,
-      id: blog.id,
-      user: blog.user,
-    };
-
-    blogService.update(updatedBlog);
-
-    const newBlogsArray = blogsArray.map((blog) =>
-      blog.id === updatedBlog.id ? updatedBlog : blog,
-    );
-
-    setBlogsArray(newBlogsArray);
-  };
-
-  const handleDeleteBlog = (event) => {
-    event.preventDefault();
-    const confirmed = window.confirm(
-      `Remove blog ${blog.title} by ${blog.author}`,
-    );
-
-    if (confirmed) {
-      blogService.del(blog.id);
-    }
-
-    const blogsArrayAfterDel = blogsArray.filter((b) => b.id !== blog.id);
-    setBlogsArray(blogsArrayAfterDel);
-  };
 
   const verifyForDeletion = () => {
     if (user.username === blog.user.username) {

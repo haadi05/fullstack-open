@@ -5,6 +5,7 @@ import loginService from "./services/login";
 import AddBlog from "./components/AddBlog";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
+import LoginForm from "./components/LoginForm";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -50,80 +51,85 @@ const App = () => {
     }
   };
 
-  const togglableRef = useRef();
+  const handleLikeUpdate = (blog) => {
+    const updatedBlog = {
+      ...blog,
+      likes: blog.likes + 1,
+    };
 
-  if (user === null) {
-    return (
-      <div>
-        <h2>Log in to application</h2>
-        <Notification notification={notification} errorMsg={errorMsg} />
-        <form onSubmit={handleLogin}>
-          <div>
-            <label>
-              username
-              <input
-                type="text"
-                required
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-              />
-            </label>
-
-            <br />
-
-            <label>
-              password
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </label>
-          </div>
-          <button type="submit">login</button>
-        </form>
-      </div>
+    blogService.update(updatedBlog);
+    const newBlogsArray = blogs.map((blog) =>
+      blog.id === updatedBlog.id ? updatedBlog : blog,
     );
-  }
+
+    setBlogs(newBlogsArray);
+  };
+
+  const handleDeleteBlog = (blog) => {
+    const confirmed = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author}`,
+    );
+
+    if (confirmed) {
+      blogService.del(blog.id);
+      const blogsArrayAfterDel = blogs.filter((b) => b.id !== blog.id);
+      setBlogs(blogsArrayAfterDel);
+    }
+  };
+
+  const togglableRef = useRef();
 
   return (
     <div>
-      <h2>blogs</h2>
-      <Notification notification={notification} errorMsg={errorMsg} />
-      <p>
-        {user.username} logged in
-        <button
-          onClick={() => {
-            window.localStorage.removeItem("loggedInUser");
-            setUser(null);
-          }}
-        >
-          logout
-        </button>
-      </p>
-
-      <Togglable reference={togglableRef}>
-        <AddBlog
-          togglableRef={togglableRef}
-          blogs={blogs}
-          setBlogs={setBlogs}
-          setNotification={setNotification}
+      {user === null ? (
+        <LoginForm
+          notification={notification}
+          errorMsg={errorMsg}
+          handleLogin={handleLogin}
+          username={username}
+          setUsername={setUsername}
+          password={password}
+          setPassword={setPassword}
         />
-      </Togglable>
+      ) : (
+        <div>
+          <h2>blogs</h2>
+          <Notification notification={notification} errorMsg={errorMsg} />
+          <p>
+            {user.username} logged in
+            <button
+              onClick={() => {
+                window.localStorage.removeItem("loggedInUser");
+                setUser(null);
+              }}
+            >
+              logout
+            </button>
+          </p>
 
-      <br />
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            user={user}
-            blog={blog}
-            blogsArray={blogs}
-            setBlogsArray={setBlogs}
-          />
-        ))}
+          <Togglable reference={togglableRef}>
+            <AddBlog
+              togglableRef={togglableRef}
+              blogs={blogs}
+              setBlogs={setBlogs}
+              setNotification={setNotification}
+            />
+          </Togglable>
+
+          <br />
+          {blogs
+            .sort((a, b) => b.likes - a.likes)
+            .map((blog) => (
+              <Blog
+                key={blog.id}
+                user={user}
+                blog={blog}
+                handleLikeUpdate={() => handleLikeUpdate(blog)}
+                handleDeleteBlog={() => handleDeleteBlog(blog)}
+              />
+            ))}
+        </div>
+      )}
     </div>
   );
 };

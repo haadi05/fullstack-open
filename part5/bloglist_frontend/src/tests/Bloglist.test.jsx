@@ -13,6 +13,7 @@ describe("<Blog />", () => {
     url: "example.com",
     user: { username: "usr", id: "userId" },
   };
+  const mockHandleLikeUpdate = vi.fn();
 
   let container;
   beforeEach(() => {
@@ -20,8 +21,8 @@ describe("<Blog />", () => {
       <Blog
         user={mockUser}
         blog={mockBlog}
-        blogsArray={[mockBlog]}
-        setBlogsArray={vi.fn()}
+        handleLikeUpdate={mockHandleLikeUpdate}
+        handleDeleteBlog={vi.fn()}
       />,
     ));
   });
@@ -40,7 +41,18 @@ describe("<Blog />", () => {
     await user.click(button);
 
     const fullView = container.querySelector(".fullView");
-
     expect(fullView).toBeInTheDocument();
+  });
+
+  test("when button is clicked twice, event handler received as props is called twice", async () => {
+    const user = userEvent.setup();
+    const button = screen.getByText("show");
+    await user.click(button);
+
+    const likeButton = screen.getByText("like");
+    await user.click(likeButton);
+    await user.click(likeButton);
+
+    expect(mockHandleLikeUpdate.mock.calls).toHaveLength(2);
   });
 });
