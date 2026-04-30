@@ -1,30 +1,22 @@
-import React, { useState } from "react";
-import blogService from "../services/blogs";
+import { useState } from "react";
 
-const AddBlog = ({ blogs, setBlogs, setNotification, togglableRef }) => {
+const BlogForm = ({ setNotification, createBlog }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
-  const addBlogHandler = async (event) => {
+  const addBlogHandler = (event) => {
     event.preventDefault();
-    togglableRef.current.toggleVisibility();
+    createBlog({ title, author, url });
 
-    try {
-      const returnedBlog = await blogService.post({ title, author, url });
-      setBlogs(blogs.concat(returnedBlog));
+    setNotification(`a new blog ${title} by ${author} added`);
+    setTimeout(() => {
+      setNotification("");
+    }, 3000);
 
-      setNotification(`a new blog ${title} by ${author} added`);
-      setTimeout(() => {
-        setNotification("");
-      }, 3000);
-
-      setTitle("");
-      setAuthor("");
-      setUrl("");
-    } catch (error) {
-      console.error("error: ", error);
-    }
+    setTitle("");
+    setAuthor("");
+    setUrl("");
   };
 
   return (
@@ -65,4 +57,4 @@ const AddBlog = ({ blogs, setBlogs, setNotification, togglableRef }) => {
   );
 };
 
-export default AddBlog;
+export default BlogForm;

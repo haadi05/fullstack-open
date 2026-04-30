@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Blog from "../components/Blog";
-import { beforeEach } from "vitest";
 
 describe("<Blog />", () => {
   const mockUser = { token: "testingToken", username: "user" };

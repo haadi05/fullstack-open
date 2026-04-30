@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
-import AddBlog from "./components/AddBlog";
+import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import LoginForm from "./components/LoginForm";
@@ -79,6 +79,16 @@ const App = () => {
 
   const togglableRef = useRef();
 
+  const createBlog = async (newBlog) => {
+    togglableRef.current.toggleVisibility();
+    try {
+      const returnedBlog = await blogService.post(newBlog);
+      setBlogs(blogs.concat(returnedBlog));
+    } catch (error) {
+      console.error("error: ", error);
+    }
+  };
+
   return (
     <div>
       {user === null ? (
@@ -108,11 +118,9 @@ const App = () => {
           </p>
 
           <Togglable reference={togglableRef}>
-            <AddBlog
-              togglableRef={togglableRef}
-              blogs={blogs}
-              setBlogs={setBlogs}
+            <BlogForm
               setNotification={setNotification}
+              createBlog={createBlog}
             />
           </Togglable>
 
