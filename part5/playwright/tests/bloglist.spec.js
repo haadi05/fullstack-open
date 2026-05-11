@@ -1,16 +1,17 @@
 const { test, expect, beforeEach, describe } = require("@playwright/test");
+const helper = require("./helper");
 
 describe("Blog app", () => {
   beforeEach(async ({ page, request }) => {
-    await request.post("http://localhost:3001/api/testing/reset");
-    await request.post("http://localhost:3001/api/users", {
+    await request.post("api/testing/reset");
+    await request.post("/api/users", {
       data: {
         name: "User",
         username: "user",
         password: "12345",
       },
     });
-    await page.goto("http://localhost:5173");
+    await page.goto("/");
   });
 
   test("Login form is shown", async ({ page }) => {
@@ -20,20 +21,31 @@ describe("Blog app", () => {
 
   describe("Login", () => {
     test("succeeds with correct credentials", async ({ page }) => {
-      await page.getByRole("textbox", { name: "username" }).fill("user");
-      await page.getByRole("textbox", { name: "password" }).fill("12345");
-      await page.getByRole("button", { name: "login" }).click();
+      await helper.login(page, "user", "12345");
       await expect(page.getByText("user logged in")).toBeVisible();
     });
 
     test("fails with wrong credentials", async ({ page }) => {
-      await page.getByRole("textbox", { name: "username" }).fill("user");
-      await page.getByRole("textbox", { name: "password" }).fill("wrong");
-      await page.getByRole("button", { name: "login" }).click();
+      await helper.login(page, "user", "wrong");
 
       const errorDiv = page.locator(".errorMsg");
       await expect(errorDiv).toContainText("wrong username or password");
       await expect(page.getByText("user logged in")).not.toBeVisible();
+    });
+
+    describe("When logged in", () => {
+      beforeEach(async ({ page }) => {
+        await helper.login(page, "user", "12345");
+      });
+
+      test("a new blog can be created", async ({ page }) => {
+        await page.getByRole("button", { name: "create blog" }).click();
+        await page.getByRole("textbox", { name: "title" }).fill("test title");
+        await page.getByRole("textbox", { name: "author" }).fill("test author");
+        await page.getByRole("textbox", { name: "url" }).fill("test url");
+        await page.getByRole("button", { name: "create" }).click();
+        await expect(page.getByText("test title by test author")).toBeVisible();
+      });
     });
   });
 });
