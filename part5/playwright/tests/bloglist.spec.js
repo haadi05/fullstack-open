@@ -39,12 +39,15 @@ describe("Blog app", () => {
       });
 
       test("a new blog can be created", async ({ page }) => {
-        await page.getByRole("button", { name: "create blog" }).click();
-        await page.getByRole("textbox", { name: "title" }).fill("test title");
-        await page.getByRole("textbox", { name: "author" }).fill("test author");
-        await page.getByRole("textbox", { name: "url" }).fill("test url");
-        await page.getByRole("button", { name: "create" }).click();
+        await helper.createBlog(page, "test title", "test author", "test url");
         await expect(page.getByText("test title by test author")).toBeVisible();
+      });
+
+      test("new blog can be liked", async ({ page }) => {
+        await helper.createBlog(page, "test title", "test author", "test url");
+        await page.getByRole("button", { name: "show" }).click();
+        await page.getByRole("button", { name: "like" }).click();
+        await expect(page.getByText("likes 1")).toBeVisible();
       });
     });
   });

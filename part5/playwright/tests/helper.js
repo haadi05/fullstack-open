@@ -3,4 +3,14 @@ const login = async (page, username, password) => {
   await page.getByRole("textbox", { name: "password" }).fill(password);
   await page.getByRole("button", { name: "login" }).click();
 };
-module.exports = { login };
+
+const createBlog = async (page, title, author, url) => {
+  await page.getByRole("button", { name: "create blog" }).click();
+  await page.getByRole("textbox", { name: "title" }).fill(title);
+  await page.getByRole("textbox", { name: "author" }).fill(author);
+  await page.getByRole("textbox", { name: "url" }).fill(url);
+  await page.getByRole("button", { name: "create" }).click();
+  await page.getByText(title, author, url).waitFor();
+};
+
+module.exports = { login, createBlog };
