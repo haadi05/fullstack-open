@@ -1,3 +1,13 @@
+const createUser = async (request, name, username, password) => {
+  await request.post("/api/users", {
+    data: {
+      name: name,
+      username: username,
+      password: password,
+    },
+  });
+};
+
 const login = async (page, username, password) => {
   await page.getByRole("textbox", { name: "username" }).fill(username);
   await page.getByRole("textbox", { name: "password" }).fill(password);
@@ -13,4 +23,4 @@ const createBlog = async (page, title, author, url) => {
   await page.getByText(title, author, url).waitFor();
 };
 
-module.exports = { login, createBlog };
+module.exports = { login, createBlog, createUser };
