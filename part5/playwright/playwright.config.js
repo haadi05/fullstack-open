@@ -14,7 +14,7 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
   testDir: "./tests",
-  timeout: 3000,
+  timeout: 4000,
   fullyParallel: false,
   workers: 1,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

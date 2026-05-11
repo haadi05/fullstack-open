@@ -33,18 +33,13 @@ describe("Blog app", () => {
       });
 
       test("a new blog can be created", async ({ page }) => {
-        await helper.createBlog(page, "test title", "test author", "test url");
-        await expect(page.getByText("test title by test author")).toBeVisible();
+        await helper.createBlog(page, "test blog", "test author", "test url");
+        await expect(page.getByText("test blog by test author")).toBeVisible();
       });
 
       describe("After creating a new blog", () => {
         beforeEach(async ({ page }) => {
-          await helper.createBlog(
-            page,
-            "test title",
-            "test author",
-            "test url",
-          );
+          await helper.createBlog(page, "test blog", "test author", "test url");
         });
 
         test("new blog can be liked", async ({ page }) => {
@@ -72,6 +67,41 @@ describe("Blog app", () => {
           await expect(page.getByText("user2 logged in")).toBeVisible();
           await page.getByRole("button", { name: "show" }).click();
           await expect(page.getByText("delete")).not.toBeVisible();
+        });
+
+        test("blogs are arranged in the order according to the likes count", async ({
+          page,
+          request,
+        }) => {
+          await page.getByRole("button", { name: "show" }).click();
+          await page.getByRole("button", { name: "like" }).click();
+          await helper.createBlog(
+            page,
+            "test blog 2",
+            "test author 2",
+            "test url 2",
+          );
+
+          await expect(
+            page.locator(".partialView").filter({ hasText: "test blog 2" }),
+          ).toBeVisible();
+
+          await page
+            .locator(".partialView")
+            .filter({ hasText: "test blog 2" })
+            .getByRole("button", { name: "show" })
+            .click();
+
+          //clicked twice
+          await page
+            .locator(".fullView")
+            .filter({ hasText: "test url 2" })
+            .getByRole("button", { name: "like" })
+            .click({ clickCount: 2 });
+
+          await expect(page.locator(".fullView").first()).toContainText(
+            "test blog 2",
+          );
         });
       });
     });
