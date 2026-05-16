@@ -4,6 +4,7 @@ const Blog = ({ blog, user, handleLikeUpdate, handleDeleteBlog }) => {
   const [toggleFullView, setToggleFullView] = useState(false);
 
   const verifyForDeletion = () => {
+    if (!user) return;
     if (user.username === blog.user.username) {
       return (
         <button style={{ color: "red" }} onClick={handleDeleteBlog}>
