@@ -1,27 +1,13 @@
 import { Link } from "react-router-dom";
-import BlogForm from "./BlogForm";
 import Notification from "./Notification";
-import Togglable from "./Togglable";
 
-const BlogList = ({
-  notification,
-  errorMsg,
-  blogs,
-  togglableRef,
-  createBlog,
-  setNotification,
-}) => {
+const BlogList = ({ notification, errorMsg, blogs }) => {
   return (
     <div>
-      <h2>blogs</h2>
       <Notification notification={notification} errorMsg={errorMsg} />
-      <Togglable reference={togglableRef}>
-        <BlogForm setNotification={setNotification} createBlog={createBlog} />
-      </Togglable>
-
+      <h2 className="title">blogs</h2>
       <br />
-
-      <ul>
+      <ul className="list">
         {blogs
           .sort((a, b) => b.likes - a.likes)
           .map((blog) => (

@@ -1,8 +1,9 @@
 import { Routes, Route, Link, useNavigate, useMatch } from "react-router-dom";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import BlogList from "./components/BlogList";
+import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import LoginForm from "./components/LoginForm";
@@ -88,13 +89,11 @@ const App = () => {
     }
   };
 
-  const togglableRef = useRef();
-
   const createBlog = async (newBlog) => {
-    togglableRef.current.toggleVisibility();
     try {
       const returnedBlog = await blogService.post(newBlog);
       setBlogs(blogs.concat(returnedBlog));
+      navigate("/");
     } catch (error) {
       console.error("error: ", error);
     }
@@ -117,6 +116,12 @@ const App = () => {
         blogs
       </Link>
 
+      {user && (
+        <Link style={padding} to="/create">
+          new blog
+        </Link>
+      )}
+
       {user ? (
         <button onClick={handleLogout}>logout</button>
       ) : (
@@ -133,16 +138,23 @@ const App = () => {
               notification={notification}
               errorMsg={errorMsg}
               blogs={blogs}
-              user={user}
-              togglableRef={togglableRef}
-              createBlog={createBlog}
               handleLikeUpdate={handleLikeUpdate}
               handleDeleteBlog={handleDeleteBlog}
               setNotification={setNotification}
-              setUser={setUser}
             />
           }
         ></Route>
+        <Route
+          path="/create"
+          element={
+            <BlogForm
+              setNotification={setNotification}
+              createBlog={createBlog}
+            />
+          }
+        >
+          new blog
+        </Route>
         <Route
           path="/login"
           element={
