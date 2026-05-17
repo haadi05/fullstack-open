@@ -1,4 +1,4 @@
-import Blog from "./Blog";
+import { Link } from "react-router-dom";
 import BlogForm from "./BlogForm";
 import Notification from "./Notification";
 import Togglable from "./Togglable";
@@ -6,12 +6,9 @@ import Togglable from "./Togglable";
 const BlogList = ({
   notification,
   errorMsg,
-  user,
   blogs,
   togglableRef,
   createBlog,
-  handleLikeUpdate,
-  handleDeleteBlog,
   setNotification,
 }) => {
   return (
@@ -23,17 +20,18 @@ const BlogList = ({
       </Togglable>
 
       <br />
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            user={user}
-            blog={blog}
-            handleLikeUpdate={() => handleLikeUpdate(blog)}
-            handleDeleteBlog={() => handleDeleteBlog(blog)}
-          />
-        ))}
+
+      <ul>
+        {blogs
+          .sort((a, b) => b.likes - a.likes)
+          .map((blog) => (
+            <li key={blog.id}>
+              <Link
+                to={`/${blog.id}`}
+              >{`${blog.title} by ${blog.author}`}</Link>
+            </li>
+          ))}
+      </ul>
     </div>
   );
 };

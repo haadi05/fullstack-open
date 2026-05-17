@@ -27,6 +27,7 @@ const BlogForm = ({ setNotification, createBlog }) => {
           <label>
             title
             <input
+              required
               type="text"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
@@ -36,6 +37,7 @@ const BlogForm = ({ setNotification, createBlog }) => {
           <label>
             author
             <input
+              required
               type="text"
               value={author}
               onChange={(event) => setAuthor(event.target.value)}
@@ -45,6 +47,7 @@ const BlogForm = ({ setNotification, createBlog }) => {
           <label>
             url
             <input
+              required
               type="text"
               value={url}
               onChange={(event) => setUrl(event.target.value)}

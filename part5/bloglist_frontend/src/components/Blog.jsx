@@ -1,7 +1,16 @@
-import { useState } from "react";
+import Notification from "./Notification";
 
-const Blog = ({ blog, user, handleLikeUpdate, handleDeleteBlog }) => {
-  const [toggleFullView, setToggleFullView] = useState(false);
+const Blog = ({
+  blog,
+  user,
+  handleLikeUpdate,
+  handleDeleteBlog,
+  errorMsg,
+  notification,
+}) => {
+  // const [toggleFullView, setToggleFullView] = useState(false);
+
+  if (!blog) return;
 
   const verifyForDeletion = () => {
     if (!user) return;
@@ -15,27 +24,24 @@ const Blog = ({ blog, user, handleLikeUpdate, handleDeleteBlog }) => {
   };
 
   return (
-    <div style={{ margin: "8px", padding: "4px", border: "1px solid black" }}>
-      {toggleFullView ? (
+    <>
+      <Notification errorMsg={errorMsg} notification={notification} />
+      <div style={{ margin: "8px", padding: "4px", border: "1px solid black" }}>
         <div className="fullView">
           {blog.title} by {blog.author}
-          <button onClick={() => setToggleFullView(false)}>hide</button>
           <br />
-          {blog.url}
+          <a target="_blank" href={`https://${blog.url}`}>
+            {blog.url}
+          </a>
           <br />
           likes {blog.likes} <button onClick={handleLikeUpdate}>like</button>
           <br />
-          {blog.user.username}
+          {`Added by ${blog.user.username}`}
           <br />
           {verifyForDeletion()}
         </div>
-      ) : (
-        <div className="partialView">
-          {blog.title} by {blog.author}
-          <button onClick={() => setToggleFullView(true)}>show</button>
-        </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 };
 

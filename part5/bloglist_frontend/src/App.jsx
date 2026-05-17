@@ -1,6 +1,7 @@
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, Link, useNavigate, useMatch } from "react-router-dom";
 
 import { useState, useEffect, useRef } from "react";
+import Blog from "./components/Blog";
 import BlogList from "./components/BlogList";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -54,6 +55,13 @@ const App = () => {
   };
 
   const handleLikeUpdate = (blog) => {
+    if (!user) {
+      setErrorMsg("First Login to like this blog");
+      setTimeout(() => {
+        setErrorMsg("");
+      }, 2500);
+      return;
+    }
     const updatedBlog = {
       ...blog,
       likes: blog.likes + 1,
@@ -76,6 +84,7 @@ const App = () => {
       blogService.del(blog.id);
       const blogsArrayAfterDel = blogs.filter((b) => b.id !== blog.id);
       setBlogs(blogsArrayAfterDel);
+      navigate("/");
     }
   };
 
@@ -96,6 +105,9 @@ const App = () => {
     setUser(null);
     navigate("/");
   };
+
+  const match = useMatch("/:id");
+  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
   const padding = { padding: 5 };
 
@@ -143,6 +155,19 @@ const App = () => {
               setUsername={setUsername}
               password={password}
               setPassword={setPassword}
+            />
+          }
+        ></Route>
+        <Route
+          path="/:id"
+          element={
+            <Blog
+              blog={blog}
+              user={user}
+              handleLikeUpdate={() => handleLikeUpdate(blog)}
+              handleDeleteBlog={() => handleDeleteBlog(blog)}
+              errorMsg={errorMsg}
+              notification={notification}
             />
           }
         ></Route>
