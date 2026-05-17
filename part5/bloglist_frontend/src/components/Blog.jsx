@@ -1,13 +1,4 @@
-import Notification from "./Notification";
-
-const Blog = ({
-  blog,
-  user,
-  handleLikeUpdate,
-  handleDeleteBlog,
-  errorMsg,
-  notification,
-}) => {
+const Blog = ({ blog, user, handleLikeUpdate, handleDeleteBlog }) => {
   // const [toggleFullView, setToggleFullView] = useState(false);
 
   if (!blog) return;
@@ -25,7 +16,6 @@ const Blog = ({
 
   return (
     <>
-      <Notification errorMsg={errorMsg} notification={notification} />
       <div style={{ margin: "8px", padding: "4px", border: "1px solid black" }}>
         <div className="fullView">
           {blog.title} by {blog.author}
@@ -34,7 +24,8 @@ const Blog = ({
             {blog.url}
           </a>
           <br />
-          likes {blog.likes} <button onClick={handleLikeUpdate}>like</button>
+          likes {blog.likes}
+          {user && <button onClick={handleLikeUpdate}>like</button>}
           <br />
           {`Added by ${blog.user.username}`}
           <br />

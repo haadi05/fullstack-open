@@ -56,13 +56,6 @@ const App = () => {
   };
 
   const handleLikeUpdate = (blog) => {
-    if (!user) {
-      setErrorMsg("First Login to like this blog");
-      setTimeout(() => {
-        setErrorMsg("");
-      }, 2500);
-      return;
-    }
     const updatedBlog = {
       ...blog,
       likes: blog.likes + 1,
@@ -178,8 +171,6 @@ const App = () => {
               user={user}
               handleLikeUpdate={() => handleLikeUpdate(blog)}
               handleDeleteBlog={() => handleDeleteBlog(blog)}
-              errorMsg={errorMsg}
-              notification={notification}
             />
           }
         ></Route>

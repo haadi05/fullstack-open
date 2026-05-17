@@ -1,57 +1,76 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { render, screen, cleanup } from "@testing-library/react";
 import Blog from "../components/Blog";
 
 describe("<Blog />", () => {
-  const mockUser = { token: "testingToken", username: "user" };
   const mockBlog = {
     author: "author",
     id: "blogId",
     likes: 0,
     title: "blog",
     url: "example.com",
-    user: { username: "usr", id: "userId" },
+    user: { username: "user", id: "userId" },
   };
   const mockHandleLikeUpdate = vi.fn();
+  const mockHandleDelete = vi.fn();
 
-  let container;
-  beforeEach(() => {
-    return ({ container } = render(
+  //test1
+  test("Blog information and the number of likes are displayed to unauthenticated users but buttons are not", () => {
+    cleanup();
+
+    const { container } = render(
       <Blog
-        user={mockUser}
         blog={mockBlog}
         handleLikeUpdate={mockHandleLikeUpdate}
-        handleDeleteBlog={vi.fn()}
+        handleDeleteBlog={mockHandleDelete}
       />,
-    ));
-  });
-
-  test("blog's title and author are visible but url or likes are not visible by default", () => {
-    const partialView = container.querySelector(".partialView");
-    const fullView = container.querySelector(".fullView");
-
-    expect(partialView).toBeInTheDocument();
-    expect(fullView).not.toBeInTheDocument();
-  });
-
-  test("blog's URL and likes are shown when 'show' button is clicked.", async () => {
-    const user = userEvent.setup();
-    const button = screen.getByText("show");
-    await user.click(button);
+    );
 
     const fullView = container.querySelector(".fullView");
+    const buttons = container.querySelector("button");
+
     expect(fullView).toBeInTheDocument();
+    expect(buttons).not.toBeInTheDocument();
   });
 
-  test("when button is clicked twice, event handler received as props is called twice", async () => {
-    const user = userEvent.setup();
-    const button = screen.getByText("show");
-    await user.click(button);
+  //test2
+  test("Authenticated users who are not the blog’s creator are shown only the like button", () => {
+    cleanup();
+    const User = { token: "testingToken", username: "otheruser" };
 
-    const likeButton = screen.getByText("like");
-    await user.click(likeButton);
-    await user.click(likeButton);
+    render(
+      <Blog
+        user={User}
+        blog={mockBlog}
+        handleLikeUpdate={mockHandleLikeUpdate}
+        handleDeleteBlog={mockHandleDelete}
+      />,
+    );
 
-    expect(mockHandleLikeUpdate.mock.calls).toHaveLength(2);
+    const likeBtn = screen.queryByRole("button", { name: "like" });
+    const deleteBtn = screen.queryByRole("button", { name: "delete" });
+
+    expect(likeBtn).toBeInTheDocument();
+    expect(deleteBtn).not.toBeInTheDocument();
+  });
+
+  //test3
+  test("The blog’s creator is also shown the delete button", () => {
+    cleanup();
+    const blogCreator = { token: "testingToken", username: "user" };
+
+    render(
+      <Blog
+        user={blogCreator}
+        blog={mockBlog}
+        handleLikeUpdate={mockHandleLikeUpdate}
+        handleDeleteBlog={mockHandleDelete}
+      />,
+    );
+
+    const likeBtn = screen.queryByRole("button", { name: "like" });
+    const deleteBtn = screen.queryByRole("button", { name: "delete" });
+
+    expect(likeBtn).toBeInTheDocument();
+    expect(deleteBtn).toBeInTheDocument();
   });
 });
