@@ -1,10 +1,27 @@
-import React from "react";
+import { Alert } from "@mui/material";
 
 const Notification = ({ notification, errorMsg }) => {
   return (
     <div>
-      {notification !== "" && <p className="notification">{notification}</p>}
-      {errorMsg !== "" && <p className="errorMsg">{errorMsg}</p>}
+      {notification !== "" && (
+        <Alert
+          className="notification"
+          style={{ marginTop: 10, marginBottom: 10 }}
+          severity="success"
+        >
+          {notification}
+        </Alert>
+      )}
+
+      {errorMsg !== "" && (
+        <Alert
+          className="errorMsg"
+          style={{ marginTop: 10, marginBottom: 10 }}
+          severity="error"
+        >
+          {errorMsg}
+        </Alert>
+      )}
     </div>
   );
 };

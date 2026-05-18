@@ -1,3 +1,4 @@
+import { Container, AppBar, Toolbar, Button, Typography } from "@mui/material";
 import { Routes, Route, Link, useNavigate, useMatch } from "react-router-dom";
 
 import { useState, useEffect } from "react";
@@ -101,27 +102,36 @@ const App = () => {
   const match = useMatch("/:id");
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
-  const padding = { padding: 5 };
+  const style = { "&:hover": { bgcolor: "rgba(255,255,255,0.3)" } };
 
   return (
-    <>
-      <Link style={padding} to="/">
-        blogs
-      </Link>
+    <Container>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Blog App
+          </Typography>
+          <Button color="inherit" component={Link} to="/" sx={style}>
+            blogs
+          </Button>
 
-      {user && (
-        <Link style={padding} to="/create">
-          new blog
-        </Link>
-      )}
+          {user && (
+            <Button color="inherit" component={Link} to="/create" sx={style}>
+              new blog
+            </Button>
+          )}
 
-      {user ? (
-        <button onClick={handleLogout}>logout</button>
-      ) : (
-        <Link style={padding} to="/login">
-          login
-        </Link>
-      )}
+          {user ? (
+            <Button color="inherit" sx={style} onClick={handleLogout}>
+              logout
+            </Button>
+          ) : (
+            <Button color="inherit" component={Link} to="/login" sx={style}>
+              login
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
 
       <Routes>
         <Route
@@ -175,7 +185,7 @@ const App = () => {
           }
         ></Route>
       </Routes>
-    </>
+    </Container>
   );
 };
 
