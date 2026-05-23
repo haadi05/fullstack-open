@@ -1,12 +1,20 @@
+import { useNotification as useNotification } from "../notificationStore";
+
 const Notification = () => {
+  const voteNotification = useNotification();
+
   const style = {
-    border: 'solid',
+    border: "solid",
     padding: 10,
     borderWidth: 1,
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  };
 
-  return <div style={style}>render here notification...</div>
-}
+  return (
+    <div>
+      {voteNotification !== "" && <div style={style}>{voteNotification}</div>}
+    </div>
+  );
+};
 
-export default Notification
+export default Notification;
