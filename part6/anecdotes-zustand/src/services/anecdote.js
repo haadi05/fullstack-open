@@ -8,11 +8,11 @@ const getAll = async () => {
   return await response.json();
 };
 
-const create = async (obj) => {
+const create = async (anecdote) => {
   const options = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(obj),
+    body: JSON.stringify(anecdote),
   };
 
   const response = await fetch(baseUrl, options);
@@ -24,4 +24,20 @@ const create = async (obj) => {
   return await response.json();
 };
 
-export default { getAll, create };
+const update = async (id, updateAnecdote) => {
+  const options = {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updateAnecdote),
+  };
+
+  const response = await fetch(`${baseUrl}/${id}`, options);
+
+  if (!response.ok) {
+    throw new Error("failed to update anecdote");
+  }
+
+  return await response.json();
+};
+
+export default { getAll, create, update };

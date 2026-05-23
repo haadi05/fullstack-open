@@ -19,6 +19,11 @@
       "content": "Premature optimization is the root of all evil.",
       "id": "25170",
       "votes": 0
+    },
+    {
+      "content": "An idiot admires complexity, a genius admires simplicity.",
+      "votes": 3,
+      "id": "hnNMIKRIe9U"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
