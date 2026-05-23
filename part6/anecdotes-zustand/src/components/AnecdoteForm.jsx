@@ -3,13 +3,10 @@ import { useAnecdoteActions } from "../store";
 const AnecdoteForm = () => {
   const { add } = useAnecdoteActions();
 
-  const getId = () => (100000 * Math.random()).toFixed(0);
-
-  const addAnecdotes = (e) => {
+  const addAnecdotes = async (e) => {
     e.preventDefault();
     const content = e.target.anecdote.value;
-    const anecdote = { content: content, id: getId(), votes: 0 };
-    add(anecdote);
+    await add(content);
     e.target.reset();
   };
 

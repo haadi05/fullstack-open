@@ -8,4 +8,20 @@ const getAll = async () => {
   return await response.json();
 };
 
-export default { getAll };
+const create = async (obj) => {
+  const options = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(obj),
+  };
+
+  const response = await fetch(baseUrl, options);
+
+  if (!response.ok) {
+    throw new Error("failed to create anecdote");
+  }
+
+  return await response.json();
+};
+
+export default { getAll, create };
