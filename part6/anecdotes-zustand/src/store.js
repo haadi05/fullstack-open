@@ -30,6 +30,15 @@ const useAnecdoteStore = create((set, get) => ({
       }));
     },
 
+    remove: async (id) => {
+      const response = await anecdoteService.remove(id);
+      if (response === 200) {
+        set(() => ({
+          anecdotes: get().anecdotes.filter((anecdote) => anecdote.id !== id),
+        }));
+      }
+    },
+
     setFilter: (value) => set(() => ({ filter: value })),
   },
 }));
