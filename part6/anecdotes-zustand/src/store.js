@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import anecdoteService from "./services/anecdote";
+import { useShallow } from "zustand/react/shallow";
 
 export const useAnecdoteStore = create((set, get) => ({
   anecdotes: [],
@@ -47,7 +48,11 @@ export const useAnecdoteActions = () =>
   useAnecdoteStore((state) => state.actions);
 
 export const useAnecdotes = () => {
-  const anecdotes = useAnecdoteStore((state) => state.anecdotes);
+  const anecdotes = useAnecdoteStore(
+    useShallow((state) =>
+      state.anecdotes.toSorted((a, b) => b.votes - a.votes),
+    ),
+  );
   const filter = useAnecdoteStore((state) => state.filter);
   return anecdotes.filter((anecdote) => anecdote.content.includes(filter));
 };
