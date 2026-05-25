@@ -58,4 +58,15 @@ describe("useAnecdoteActions", () => {
     expect(anecdoteResult.current[0].votes === 1).toBe(true);
     expect(anecdoteResult.current[0].id).toEqual(anecdotes[1].id);
   });
+
+  it("filter anecdotes", () => {
+    const anecdotes = [
+      { id: "1", content: "Test", votes: 0 },
+      { id: "2", content: "Test2", votes: 2 },
+      { id: "3", content: "Test3", votes: 0 },
+    ];
+    useAnecdoteStore.setState({ anecdotes, filter: "Test3" });
+    const { result } = renderHook(() => useAnecdotes());
+    expect(result.current).toEqual([anecdotes[2]]);
+  });
 });
