@@ -11,7 +11,7 @@ const App = () => {
   const result = useQuery({
     queryKey: ["anecdotes"],
     queryFn: getAll,
-    retry: false,
+    retry: 1,
   });
 
   if (result.isPending) {
