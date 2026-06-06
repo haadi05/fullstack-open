@@ -1,7 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAll, update, create } from "../requests";
+import { useContext } from "react";
+import AnecdoteContext from "../context/AnecdoteContext";
 
 export const useAnecdotes = () => {
+  const { setNotification } = useContext(AnecdoteContext);
+
   const queryClient = useQueryClient();
 
   const result = useQuery({
@@ -21,6 +25,12 @@ export const useAnecdotes = () => {
     mutationFn: create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["anecdotes"] });
+    },
+    onError: () => {
+      setNotification("too short anecdote, must have length 5 or more");
+      setTimeout(() => {
+        setNotification("");
+      }, 5000);
     },
   });
 
