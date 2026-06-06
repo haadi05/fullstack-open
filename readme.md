@@ -1,7 +1,7 @@
 # Full Stack Open
 
-My solutions for the [Full Stack Open](https://fullstackopen.com/) course by the
-[University of Helsinki](https://www.helsinki.fi/) — a deep dive into modern web
+My solutions for the [Full Stack Open](https://fullstackopen.com/en/) course by the
+[University of Helsinki](https://www.helsinki.fi/en) — a deep dive into modern web
 development.
 
 ## Progress
@@ -14,5 +14,5 @@ development.
 | [3](./part3/) |  Done   |   22/22   |
 | [4](./part4/) |  Done   |   22/23   |
 | [5](./part5/) |  Done   |   31/31   |
-| [6](./part6/) | Pending |   0/22    |
+| [6](./part6/) |  Done   |   22/22   |
 | [7](./part7/) | Pending |   0/20    |
