@@ -6,6 +6,7 @@ const CreateNew = ({ addAnecdote }) => {
   const content = useField("text");
   const author = useField("text");
   const info = useField("text");
+  const reset = useField("text");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -37,6 +38,7 @@ const CreateNew = ({ addAnecdote }) => {
         </div>
         <button>create</button>
       </form>
+      <button onClick={reset.reset}>reset</button>
     </div>
   );
 };
