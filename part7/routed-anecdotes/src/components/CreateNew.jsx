@@ -3,10 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useField } from "../hooks";
 
 const CreateNew = ({ addAnecdote }) => {
-  const content = useField("text");
-  const author = useField("text");
-  const info = useField("text");
-  const reset = useField("text");
+  const [content, resetContent] = useField("text");
+  const [author, resetAuthor] = useField("text");
+  const [info, resetInfo] = useField("text");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -18,6 +17,12 @@ const CreateNew = ({ addAnecdote }) => {
       votes: 0,
     });
     navigate("/");
+  };
+
+  const handleReset = () => {
+    resetContent();
+    resetAuthor();
+    resetInfo();
   };
 
   return (
@@ -38,7 +43,7 @@ const CreateNew = ({ addAnecdote }) => {
         </div>
         <button>create</button>
       </form>
-      <button onClick={reset.reset}>reset</button>
+      <button onClick={handleReset}>reset</button>
     </div>
   );
 };
