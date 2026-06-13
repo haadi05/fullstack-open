@@ -8,7 +8,12 @@ const useAnecdote = () => {
     anecdoteService.getAll().then((data) => setAnecdotes(data));
   }, []);
 
-  return { anecdotes };
+  const addAnecdote = async (anecdote) => {
+    const response = await anecdoteService.createNew(anecdote);
+    setAnecdotes(anecdotes.concat(response));
+  };
+
+  return { anecdotes, addAnecdote };
 };
 
 export default useAnecdote;
