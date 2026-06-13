@@ -13,7 +13,14 @@ const useAnecdote = () => {
     setAnecdotes(anecdotes.concat(response));
   };
 
-  return { anecdotes, addAnecdote };
+  const delAnecdote = async (id) => {
+    const response = await anecdoteService.del(id);
+    if (response === 200) {
+      setAnecdotes(anecdotes.filter((anecdote) => anecdote.id !== id));
+    }
+  };
+
+  return { anecdotes, addAnecdote, delAnecdote };
 };
 
 export default useAnecdote;
