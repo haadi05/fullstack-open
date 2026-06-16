@@ -1,6 +1,8 @@
 import { Box, TableContainer, Paper, Typography, Button } from "@mui/material";
+import NotFound from "./NotFound";
+
 const Blog = ({ blog, user, handleLikeUpdate, handleDeleteBlog }) => {
-  if (!blog) return;
+  if (!blog) return <NotFound />;
 
   const verifyForDeletion = () => {
     if (!user) return;

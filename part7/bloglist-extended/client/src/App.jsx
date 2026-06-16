@@ -9,6 +9,7 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import LoginForm from "./components/LoginForm";
 import { ErrorBoundary } from "react-error-boundary";
+import NotFound from "./components/NotFound";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -193,6 +194,7 @@ const App = () => {
             </ErrorBoundary>
           }
         ></Route>
+        <Route path="/*" element={<NotFound />}></Route>
       </Routes>
     </Container>
   );
