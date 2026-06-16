@@ -8,6 +8,7 @@ import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import LoginForm from "./components/LoginForm";
+import { ErrorBoundary } from "react-error-boundary";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -137,23 +138,27 @@ const App = () => {
         <Route
           path="/"
           element={
-            <BlogList
-              notification={notification}
-              errorMsg={errorMsg}
-              blogs={blogs}
-              handleLikeUpdate={handleLikeUpdate}
-              handleDeleteBlog={handleDeleteBlog}
-              setNotification={setNotification}
-            />
+            <ErrorBoundary fallback={<h3>Oops something went wrong</h3>}>
+              <BlogList
+                notification={notification}
+                errorMsg={errorMsg}
+                blogs={blogs}
+                handleLikeUpdate={handleLikeUpdate}
+                handleDeleteBlog={handleDeleteBlog}
+                setNotification={setNotification}
+              />
+            </ErrorBoundary>
           }
         ></Route>
         <Route
           path="/create"
           element={
-            <BlogForm
-              setNotification={setNotification}
-              createBlog={createBlog}
-            />
+            <ErrorBoundary fallback={<h3>Oops something went wrong</h3>}>
+              <BlogForm
+                setNotification={setNotification}
+                createBlog={createBlog}
+              />
+            </ErrorBoundary>
           }
         >
           new blog
@@ -161,27 +166,31 @@ const App = () => {
         <Route
           path="/login"
           element={
-            <LoginForm
-              user={user}
-              notification={notification}
-              errorMsg={errorMsg}
-              handleLogin={handleLogin}
-              username={username}
-              setUsername={setUsername}
-              password={password}
-              setPassword={setPassword}
-            />
+            <ErrorBoundary fallback={<h3>Oops something went wrong</h3>}>
+              <LoginForm
+                user={user}
+                notification={notification}
+                errorMsg={errorMsg}
+                handleLogin={handleLogin}
+                username={username}
+                setUsername={setUsername}
+                password={password}
+                setPassword={setPassword}
+              />
+            </ErrorBoundary>
           }
         ></Route>
         <Route
           path="/:id"
           element={
-            <Blog
-              blog={blog}
-              user={user}
-              handleLikeUpdate={() => handleLikeUpdate(blog)}
-              handleDeleteBlog={() => handleDeleteBlog(blog)}
-            />
+            <ErrorBoundary fallback={<h3>Oops something went wrong</h3>}>
+              <Blog
+                blog={blog}
+                user={user}
+                handleLikeUpdate={() => handleLikeUpdate(blog)}
+                handleDeleteBlog={() => handleDeleteBlog(blog)}
+              />
+            </ErrorBoundary>
           }
         ></Route>
       </Routes>
