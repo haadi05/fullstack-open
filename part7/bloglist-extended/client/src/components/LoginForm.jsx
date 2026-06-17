@@ -3,8 +3,6 @@ import Notification from "./Notification";
 
 const LoginForm = ({
   user,
-  notification,
-  errorMsg,
   handleLogin,
   username,
   setUsername,
@@ -18,7 +16,7 @@ const LoginForm = ({
       ) : (
         <div>
           <h2>Log in to application</h2>
-          <Notification notification={notification} errorMsg={errorMsg} />
+          <Notification />
           <form onSubmit={handleLogin}>
             <div>
               <TextField

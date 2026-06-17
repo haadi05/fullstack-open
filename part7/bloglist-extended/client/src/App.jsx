@@ -10,14 +10,15 @@ import loginService from "./services/login";
 import LoginForm from "./components/LoginForm";
 import { ErrorBoundary } from "react-error-boundary";
 import NotFound from "./components/NotFound";
+import useNotification from "./hooks/useNotification";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [notification, setNotification] = useState("");
+
+  const { dispatch } = useNotification();
 
   useEffect(() => {
     const getBlogs = async () => {
@@ -50,9 +51,15 @@ const App = () => {
       navigate("/");
     } catch (error) {
       if (error.toString().includes("401")) {
-        setErrorMsg("wrong username or password");
+        dispatch({
+          type: "SET",
+          payload: {
+            message: "wrong username or password",
+            type: "error",
+          },
+        });
         setTimeout(() => {
-          setErrorMsg("");
+          dispatch({ type: "CLEAR" });
         }, 3000);
       }
     }
@@ -141,12 +148,9 @@ const App = () => {
           element={
             <ErrorBoundary fallback={<h3>Oops something went wrong</h3>}>
               <BlogList
-                notification={notification}
-                errorMsg={errorMsg}
                 blogs={blogs}
                 handleLikeUpdate={handleLikeUpdate}
                 handleDeleteBlog={handleDeleteBlog}
-                setNotification={setNotification}
               />
             </ErrorBoundary>
           }
@@ -155,10 +159,7 @@ const App = () => {
           path="/create"
           element={
             <ErrorBoundary fallback={<h3>Oops something went wrong</h3>}>
-              <BlogForm
-                setNotification={setNotification}
-                createBlog={createBlog}
-              />
+              <BlogForm createBlog={createBlog} />
             </ErrorBoundary>
           }
         >
@@ -170,8 +171,6 @@ const App = () => {
             <ErrorBoundary fallback={<h3>Oops something went wrong</h3>}>
               <LoginForm
                 user={user}
-                notification={notification}
-                errorMsg={errorMsg}
                 handleLogin={handleLogin}
                 username={username}
                 setUsername={setUsername}

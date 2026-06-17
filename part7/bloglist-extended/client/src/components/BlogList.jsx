@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import Notification from "./Notification";
 
-const BlogList = ({ notification, errorMsg, blogs }) => {
+const BlogList = ({ blogs }) => {
   return (
     <div>
-      <Notification notification={notification} errorMsg={errorMsg} />
+      <Notification />
       <h2 className="title">blogs</h2>
       <br />
       <ul className="list">

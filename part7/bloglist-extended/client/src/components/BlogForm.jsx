@@ -1,7 +1,10 @@
 import { TextField, Button } from "@mui/material";
 import { useState } from "react";
+import useNotification from "../hooks/useNotification";
 
-const BlogForm = ({ setNotification, createBlog }) => {
+const BlogForm = ({ createBlog }) => {
+  const { dispatch } = useNotification();
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -10,9 +13,15 @@ const BlogForm = ({ setNotification, createBlog }) => {
     event.preventDefault();
     createBlog({ title, author, url });
 
-    setNotification(`a new blog ${title} by ${author} added`);
+    dispatch({
+      type: "SET",
+      payload: {
+        message: `a new blog ${title} by ${author} added`,
+        type: "success",
+      },
+    });
     setTimeout(() => {
-      setNotification("");
+      dispatch({ type: "CLEAR" });
     }, 3000);
 
     setTitle("");
