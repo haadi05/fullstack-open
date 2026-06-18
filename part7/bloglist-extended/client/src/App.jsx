@@ -14,12 +14,12 @@ import useNotification from "./hooks/useNotification";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const App = () => {
-  const { dispatch } = useNotification();
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
+  const navigate = useNavigate();
+  const { dispatch } = useNotification();
   const queryClient = useQueryClient();
 
   const result = useQuery({
@@ -32,6 +32,16 @@ const App = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
   });
 
+  const likeBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
+  });
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.del,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
+  });
+
   useEffect(() => {
     const loggedInUserJson = window.localStorage.getItem("loggedInUser");
     if (loggedInUserJson) {
@@ -40,8 +50,6 @@ const App = () => {
       setUser(user);
     }
   }, []);
-
-  const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -75,12 +83,7 @@ const App = () => {
       likes: blog.likes + 1,
     };
 
-    blogService.update(updatedBlog);
-    const newBlogsArray = blogs.map((blog) =>
-      blog.id === updatedBlog.id ? updatedBlog : blog,
-    );
-
-    setBlogs(newBlogsArray);
+    likeBlogMutation.mutate(updatedBlog);
   };
 
   const handleDeleteBlog = (blog) => {
@@ -89,9 +92,7 @@ const App = () => {
     );
 
     if (confirmed) {
-      blogService.del(blog.id);
-      const blogsArrayAfterDel = blogs.filter((b) => b.id !== blog.id);
-      setBlogs(blogsArrayAfterDel);
+      deleteBlogMutation.mutate(blog.id);
       navigate("/");
     }
   };
@@ -113,12 +114,10 @@ const App = () => {
 
   const match = useMatch("/:id");
 
-  //
   if (result.isPending) {
     return <div>Loading data...</div>;
   }
   const blogs = result.data;
-  //
 
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
