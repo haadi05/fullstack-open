@@ -11,22 +11,26 @@ import LoginForm from "./components/LoginForm";
 import { ErrorBoundary } from "react-error-boundary";
 import NotFound from "./components/NotFound";
 import useNotification from "./hooks/useNotification";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  const { dispatch } = useNotification();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
-  const { dispatch } = useNotification();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const getBlogs = async () => {
-      const fetchedBlogs = await blogService.getAll();
-      setBlogs(fetchedBlogs);
-    };
-    getBlogs();
-  }, []);
+  const result = useQuery({
+    queryKey: ["blogs"],
+    queryFn: blogService.getAll,
+  });
+
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.post,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
+  });
 
   useEffect(() => {
     const loggedInUserJson = window.localStorage.getItem("loggedInUser");
@@ -94,8 +98,7 @@ const App = () => {
 
   const createBlog = async (newBlog) => {
     try {
-      const returnedBlog = await blogService.post(newBlog);
-      setBlogs(blogs.concat(returnedBlog));
+      newBlogMutation.mutate(newBlog);
       navigate("/");
     } catch (error) {
       console.error("error: ", error);
@@ -109,10 +112,17 @@ const App = () => {
   };
 
   const match = useMatch("/:id");
+
+  //
+  if (result.isPending) {
+    return <div>Loading data...</div>;
+  }
+  const blogs = result.data;
+  //
+
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
   const style = { "&:hover": { bgcolor: "rgba(255,255,255,0.3)" } };
-
   return (
     <Container>
       <AppBar position="static">
