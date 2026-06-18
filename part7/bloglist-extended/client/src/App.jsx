@@ -11,6 +11,7 @@ import LoginForm from "./components/LoginForm";
 import NotFound from "./components/NotFound";
 import blogService from "./services/blogs";
 import useBlogContext from "./hooks/useBlogContext";
+import { getUser, removeUser } from "./services/persistentUser";
 
 const App = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const App = () => {
   const { user, setUser } = useBlogContext();
 
   useEffect(() => {
-    const loggedInUserJson = window.localStorage.getItem("loggedInUser");
+    const loggedInUserJson = getUser();
     if (loggedInUserJson) {
       const user = JSON.parse(loggedInUserJson);
       blogService.setToken(user.token);
@@ -38,7 +39,7 @@ const App = () => {
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
   const handleLogout = () => {
-    window.localStorage.removeItem("loggedInUser");
+    removeUser();
     setUser(null);
     navigate("/");
   };

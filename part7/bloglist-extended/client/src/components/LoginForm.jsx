@@ -5,6 +5,7 @@ import Notification from "./Notification";
 import loginService from "../services/login";
 import blogService from "../services/blogs";
 import useBlogContext from "../hooks/useBlogContext";
+import { saveUser } from "../services/persistentUser";
 
 const LoginForm = () => {
   const {
@@ -23,7 +24,7 @@ const LoginForm = () => {
     event.preventDefault();
     try {
       const user = await loginService.login({ username, password });
-      window.localStorage.setItem("loggedInUser", JSON.stringify(user));
+      saveUser(user);
       blogService.setToken(user.token);
       setUser(user);
       setUsername("");

@@ -1,23 +1,23 @@
 import { TextField, Button } from "@mui/material";
-import { useState } from "react";
 import useBlogContext from "../hooks/useBlogContext";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import blogService from "../services/blogs";
+import useField from "../hooks/useField";
 
 const BlogForm = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { dispatch } = useBlogContext();
 
+  const [title, setTitle] = useField("text", "title");
+  const [author, setAuthor] = useField("text", "author");
+  const [url, setUrl] = useField("text", "url");
+
   const newBlogMutation = useMutation({
     mutationFn: blogService.post,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
   });
-
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
 
   const createBlog = async (newBlog) => {
     try {
@@ -30,12 +30,13 @@ const BlogForm = () => {
 
   const addBlogHandler = (event) => {
     event.preventDefault();
-    createBlog({ title, author, url });
+
+    createBlog({ title: title.value, author: author.value, url: url.value });
 
     dispatch({
       type: "SET",
       payload: {
-        message: `a new blog ${title} by ${author} added`,
+        message: `a new blog ${title.value} by ${author.value} added`,
         type: "success",
       },
     });
@@ -53,35 +54,11 @@ const BlogForm = () => {
       <h2>create new</h2>
       <form onSubmit={addBlogHandler}>
         <div>
-          <TextField
-            style={{ marginBottom: 10 }}
-            size="small"
-            placeholder="title"
-            required
-            type="text"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-          />
+          <TextField {...title} required />
           <br />
-          <TextField
-            style={{ marginBottom: 10 }}
-            size="small"
-            placeholder="author"
-            required
-            type="text"
-            value={author}
-            onChange={(event) => setAuthor(event.target.value)}
-          />
+          <TextField {...author} required />
           <br />
-          <TextField
-            placeholder="url"
-            style={{ marginBottom: 10 }}
-            size="small"
-            required
-            type="text"
-            value={url}
-            onChange={(event) => setUrl(event.target.value)}
-          />
+          <TextField {...url} required />
         </div>
         <Button type="submit" variant="contained" size="small">
           create
