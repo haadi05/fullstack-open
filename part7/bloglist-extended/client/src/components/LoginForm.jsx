@@ -1,14 +1,50 @@
+import { useNavigate } from "react-router-dom";
 import { TextField, Button } from "@mui/material";
-import Notification from "./Notification";
 
-const LoginForm = ({
-  user,
-  handleLogin,
-  username,
-  setUsername,
-  password,
-  setPassword,
-}) => {
+import Notification from "./Notification";
+import loginService from "../services/login";
+import blogService from "../services/blogs";
+import useBlogContext from "../hooks/useBlogContext";
+
+const LoginForm = () => {
+  const {
+    dispatch,
+    user,
+    setUser,
+    username,
+    setUsername,
+    password,
+    setPassword,
+  } = useBlogContext();
+
+  const navigate = useNavigate();
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    try {
+      const user = await loginService.login({ username, password });
+      window.localStorage.setItem("loggedInUser", JSON.stringify(user));
+      blogService.setToken(user.token);
+      setUser(user);
+      setUsername("");
+      setPassword("");
+      navigate("/");
+    } catch (error) {
+      if (error.toString().includes("401")) {
+        dispatch({
+          type: "SET",
+          payload: {
+            message: "wrong username or password",
+            type: "error",
+          },
+        });
+        setTimeout(() => {
+          dispatch({ type: "CLEAR" });
+        }, 3000);
+      }
+    }
+  };
+
   return (
     <>
       {user ? (

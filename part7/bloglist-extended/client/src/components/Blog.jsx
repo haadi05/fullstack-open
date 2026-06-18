@@ -1,8 +1,44 @@
 import { Box, TableContainer, Paper, Typography, Button } from "@mui/material";
 import NotFound from "./NotFound";
+import { useNavigate } from "react-router-dom";
+import useBlogContext from "../hooks/useBlogContext";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import blogService from "../services/blogs";
 
-const Blog = ({ blog, user, handleLikeUpdate, handleDeleteBlog }) => {
+const Blog = ({ blog }) => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { user } = useBlogContext();
+
+  const likeBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
+  });
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.del,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
+  });
+
   if (!blog) return <NotFound />;
+
+  const handleLikeUpdate = (blog) => {
+    const updatedBlog = {
+      ...blog,
+      likes: blog.likes + 1,
+    };
+    likeBlogMutation.mutate(updatedBlog);
+  };
+
+  const handleDeleteBlog = (blog) => {
+    const confirmed = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author}`,
+    );
+    if (confirmed) {
+      deleteBlogMutation.mutate(blog.id);
+      navigate("/");
+    }
+  };
 
   const verifyForDeletion = () => {
     if (!user) return;
@@ -12,7 +48,7 @@ const Blog = ({ blog, user, handleLikeUpdate, handleDeleteBlog }) => {
           variant="outlined"
           color="error"
           size="small"
-          onClick={handleDeleteBlog}
+          onClick={() => handleDeleteBlog(blog)}
         >
           delete
         </Button>
@@ -51,7 +87,7 @@ const Blog = ({ blog, user, handleLikeUpdate, handleDeleteBlog }) => {
             <Button
               variant="outlined"
               size="small"
-              onClick={handleLikeUpdate}
+              onClick={() => handleLikeUpdate(blog)}
               sx={{ mr: 1 }}
             >
               like

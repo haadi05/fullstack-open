@@ -1,4 +1,4 @@
-import { createContext, useReducer } from "react";
+import { createContext, useReducer, useState } from "react";
 
 const BlogContext = createContext();
 
@@ -20,12 +20,21 @@ export const BlogContextProvider = (props) => {
     }
   };
   const [notification, dispatch] = useReducer(reducer, null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [user, setUser] = useState(null);
 
   return (
     <BlogContext.Provider
       value={{
         notification,
         dispatch,
+        username,
+        setUsername,
+        password,
+        setPassword,
+        user,
+        setUser,
       }}
     >
       {props.children}

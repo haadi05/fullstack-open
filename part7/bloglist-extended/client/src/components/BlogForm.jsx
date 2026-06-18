@@ -1,13 +1,32 @@
 import { TextField, Button } from "@mui/material";
 import { useState } from "react";
-import useNotification from "../hooks/useNotification";
+import useBlogContext from "../hooks/useBlogContext";
+import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import blogService from "../services/blogs";
 
-const BlogForm = ({ createBlog }) => {
-  const { dispatch } = useNotification();
+const BlogForm = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { dispatch } = useBlogContext();
+
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.post,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
+  });
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
+
+  const createBlog = async (newBlog) => {
+    try {
+      newBlogMutation.mutate(newBlog);
+      navigate("/");
+    } catch (error) {
+      console.error("error: ", error);
+    }
+  };
 
   const addBlogHandler = (event) => {
     event.preventDefault();

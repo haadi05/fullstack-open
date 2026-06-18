@@ -1,46 +1,21 @@
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ErrorBoundary } from "react-error-boundary";
 import { Container, AppBar, Toolbar, Button, Typography } from "@mui/material";
 import { Routes, Route, Link, useNavigate, useMatch } from "react-router-dom";
 
-import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import BlogList from "./components/BlogList";
 import BlogForm from "./components/BlogForm";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
 import LoginForm from "./components/LoginForm";
-import { ErrorBoundary } from "react-error-boundary";
 import NotFound from "./components/NotFound";
-import useNotification from "./hooks/useNotification";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import blogService from "./services/blogs";
+import useBlogContext from "./hooks/useBlogContext";
 
 const App = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
-
   const navigate = useNavigate();
-  const { dispatch } = useNotification();
-  const queryClient = useQueryClient();
-
-  const result = useQuery({
-    queryKey: ["blogs"],
-    queryFn: blogService.getAll,
-  });
-
-  const newBlogMutation = useMutation({
-    mutationFn: blogService.post,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
-  });
-
-  const likeBlogMutation = useMutation({
-    mutationFn: blogService.update,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
-  });
-
-  const deleteBlogMutation = useMutation({
-    mutationFn: blogService.del,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
-  });
+  const match = useMatch("/:id");
+  const { user, setUser } = useBlogContext();
 
   useEffect(() => {
     const loggedInUserJson = window.localStorage.getItem("loggedInUser");
@@ -51,75 +26,22 @@ const App = () => {
     }
   }, []);
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    try {
-      const user = await loginService.login({ username, password });
-      window.localStorage.setItem("loggedInUser", JSON.stringify(user));
-      blogService.setToken(user.token);
-      setUser(user);
-      setUsername("");
-      setPassword("");
-      navigate("/");
-    } catch (error) {
-      if (error.toString().includes("401")) {
-        dispatch({
-          type: "SET",
-          payload: {
-            message: "wrong username or password",
-            type: "error",
-          },
-        });
-        setTimeout(() => {
-          dispatch({ type: "CLEAR" });
-        }, 3000);
-      }
-    }
-  };
+  const result = useQuery({
+    queryKey: ["blogs"],
+    queryFn: blogService.getAll,
+  });
 
-  const handleLikeUpdate = (blog) => {
-    const updatedBlog = {
-      ...blog,
-      likes: blog.likes + 1,
-    };
-
-    likeBlogMutation.mutate(updatedBlog);
-  };
-
-  const handleDeleteBlog = (blog) => {
-    const confirmed = window.confirm(
-      `Remove blog ${blog.title} by ${blog.author}`,
-    );
-
-    if (confirmed) {
-      deleteBlogMutation.mutate(blog.id);
-      navigate("/");
-    }
-  };
-
-  const createBlog = async (newBlog) => {
-    try {
-      newBlogMutation.mutate(newBlog);
-      navigate("/");
-    } catch (error) {
-      console.error("error: ", error);
-    }
-  };
+  if (result.isPending) {
+    return <div>Loading data...</div>;
+  }
+  const blogs = result.data;
+  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedInUser");
     setUser(null);
     navigate("/");
   };
-
-  const match = useMatch("/:id");
-
-  if (result.isPending) {
-    return <div>Loading data...</div>;
-  }
-  const blogs = result.data;
-
-  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
   const style = { "&:hover": { bgcolor: "rgba(255,255,255,0.3)" } };
   return (
@@ -156,11 +78,7 @@ const App = () => {
           path="/"
           element={
             <ErrorBoundary fallback={<h3>Oops something went wrong</h3>}>
-              <BlogList
-                blogs={blogs}
-                handleLikeUpdate={handleLikeUpdate}
-                handleDeleteBlog={handleDeleteBlog}
-              />
+              <BlogList blogs={blogs} />
             </ErrorBoundary>
           }
         ></Route>
@@ -168,7 +86,7 @@ const App = () => {
           path="/create"
           element={
             <ErrorBoundary fallback={<h3>Oops something went wrong</h3>}>
-              <BlogForm createBlog={createBlog} />
+              <BlogForm />
             </ErrorBoundary>
           }
         >
@@ -178,14 +96,7 @@ const App = () => {
           path="/login"
           element={
             <ErrorBoundary fallback={<h3>Oops something went wrong</h3>}>
-              <LoginForm
-                user={user}
-                handleLogin={handleLogin}
-                username={username}
-                setUsername={setUsername}
-                password={password}
-                setPassword={setPassword}
-              />
+              <LoginForm />
             </ErrorBoundary>
           }
         ></Route>
@@ -193,12 +104,7 @@ const App = () => {
           path="/:id"
           element={
             <ErrorBoundary fallback={<h3>Oops something went wrong</h3>}>
-              <Blog
-                blog={blog}
-                user={user}
-                handleLikeUpdate={() => handleLikeUpdate(blog)}
-                handleDeleteBlog={() => handleDeleteBlog(blog)}
-              />
+              <Blog blog={blog} />
             </ErrorBoundary>
           }
         ></Route>

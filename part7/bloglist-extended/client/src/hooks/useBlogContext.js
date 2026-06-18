@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import BlogContext from "../context/BlogContext";
 
-const useNotification = () => useContext(BlogContext);
+const useBlogContext = () => useContext(BlogContext);
 
-export default useNotification;
+export default useBlogContext;

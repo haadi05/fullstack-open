@@ -1,8 +1,8 @@
 import { Alert } from "@mui/material";
-import useNotification from "../hooks/useNotification";
+import useBlogContext from "../hooks/useBlogContext";
 
 const Notification = () => {
-  const { notification } = useNotification();
+  const { notification } = useBlogContext();
   return (
     <div>
       {notification !== null && (
