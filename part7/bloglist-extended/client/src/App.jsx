@@ -12,6 +12,7 @@ import NotFound from "./components/NotFound";
 import blogService from "./services/blogs";
 import useBlogContext from "./hooks/useBlogContext";
 import { getUser, removeUser } from "./services/persistentUser";
+import UserList from "./components/UserList";
 
 const App = () => {
   const navigate = useNavigate();
@@ -55,6 +56,12 @@ const App = () => {
           <Button color="inherit" component={Link} to="/" sx={style}>
             blogs
           </Button>
+
+          {user && (
+            <Button color="inherit" component={Link} to="/users" sx={style}>
+              users
+            </Button>
+          )}
 
           {user && (
             <Button color="inherit" component={Link} to="/create" sx={style}>
@@ -109,6 +116,7 @@ const App = () => {
             </ErrorBoundary>
           }
         ></Route>
+        <Route path="/users" element={<UserList />}></Route>
         <Route path="/*" element={<NotFound />}></Route>
       </Routes>
     </Container>

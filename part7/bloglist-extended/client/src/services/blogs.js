@@ -31,4 +31,9 @@ const del = async (blogId) => {
   return response.data;
 };
 
-export default { getAll, post, update, del, setToken };
+const getUser = async () => {
+  const response = await axios.get("api/users");
+  return response.data;
+};
+
+export default { getAll, post, update, del, setToken, getUser };
