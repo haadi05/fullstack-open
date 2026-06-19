@@ -32,7 +32,7 @@ const del = async (blogId) => {
 };
 
 const getUser = async () => {
-  const response = await axios.get("api/users");
+  const response = await axios.get("/api/users");
   return response.data;
 };
 

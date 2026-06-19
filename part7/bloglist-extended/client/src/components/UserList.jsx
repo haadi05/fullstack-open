@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import blogService from "../services/blogs";
 import { Link } from "react-router-dom";
 import {
   Table,
@@ -11,17 +9,7 @@ import {
   Paper,
 } from "@mui/material";
 
-const UserList = () => {
-  const result = useQuery({
-    queryKey: ["users"],
-    queryFn: blogService.getUser,
-  });
-
-  if (result.isPending) {
-    return <div>loading data...</div>;
-  }
-
-  const blogUsers = result.data;
+const UserList = ({ blogUsers }) => {
   return (
     <div>
       <h2 className="title">Users</h2>
@@ -39,7 +27,7 @@ const UserList = () => {
             {blogUsers.map((blogUser) => (
               <TableRow key={blogUser.id}>
                 <TableCell>
-                  <Link>{blogUser.name}</Link>
+                  <Link to={`${blogUser.id}`}>{blogUser.name}</Link>
                 </TableCell>
                 <TableCell>{blogUser.username}</TableCell>
                 <TableCell>{blogUser.blogs.length}</TableCell>

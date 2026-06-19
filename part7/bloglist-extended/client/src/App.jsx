@@ -13,10 +13,12 @@ import blogService from "./services/blogs";
 import useBlogContext from "./hooks/useBlogContext";
 import { getUser, removeUser } from "./services/persistentUser";
 import UserList from "./components/UserList";
+import User from "./components/User";
 
 const App = () => {
   const navigate = useNavigate();
   const match = useMatch("/:id");
+  const userMatch = useMatch("users/:id");
   const { user, setUser } = useBlogContext();
 
   useEffect(() => {
@@ -33,11 +35,22 @@ const App = () => {
     queryFn: blogService.getAll,
   });
 
-  if (result.isPending) {
+  const usersResult = useQuery({
+    queryKey: ["users"],
+    queryFn: blogService.getUser,
+  });
+
+  if (result.isPending || usersResult.isPending) {
     return <div>Loading data...</div>;
   }
+
   const blogs = result.data;
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
+
+  const blogUsers = usersResult.data;
+  const blogUser = userMatch
+    ? blogUsers.find((blogUser) => blogUser.id === userMatch.params.id)
+    : null;
 
   const handleLogout = () => {
     removeUser();
@@ -46,6 +59,7 @@ const App = () => {
   };
 
   const style = { "&:hover": { bgcolor: "rgba(255,255,255,0.3)" } };
+
   return (
     <Container>
       <AppBar position="static">
@@ -116,7 +130,11 @@ const App = () => {
             </ErrorBoundary>
           }
         ></Route>
-        <Route path="/users" element={<UserList />}></Route>
+        <Route
+          path="/users"
+          element={<UserList blogUsers={blogUsers} />}
+        ></Route>
+        <Route path="/users/:id" element={<User blogUser={blogUser} />}></Route>
         <Route path="/*" element={<NotFound />}></Route>
       </Routes>
     </Container>
