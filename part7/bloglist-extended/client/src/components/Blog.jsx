@@ -47,6 +47,7 @@ const Blog = ({ blog }) => {
   const handleAddComment = (event, blog) => {
     event.preventDefault();
     addCommentMutation.mutate({ comment, id: blog.id });
+    setComment("");
   };
 
   const handleDeleteBlog = (blog) => {
@@ -126,11 +127,13 @@ const Blog = ({ blog }) => {
           <TextField
             required
             placeholder="add a comment"
+            style={{ marginBottom: 10, marginRight: 6 }}
+            size="small"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
 
-          <Button type="submit" variant="contained" size="small">
+          <Button type="submit" variant="contained" size="medium">
             Add Comment
           </Button>
         </form>
