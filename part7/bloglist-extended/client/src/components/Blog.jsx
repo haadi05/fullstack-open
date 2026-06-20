@@ -59,21 +59,21 @@ const Blog = ({ blog }) => {
   return (
     <TableContainer component={Paper} style={{ marginTop: 10, padding: 10 }}>
       <div className="fullView">
-        <Typography variant="h5">{blog.title}</Typography>
+        <Typography variant="h4">{blog.title}</Typography>
 
         <Typography
-          variant="body1"
+          variant="h6"
           color="textDisabled"
           sx={{ mb: 1 }}
         >{`by ${blog.author}`}</Typography>
 
-        <Typography variant="body1" sx={{ mb: 1 }}>
+        <Typography variant="body1" color="primary" sx={{ mb: 1 }}>
           <a target="_blank" href={`https://${blog.url}`}>
             {blog.url}
           </a>
         </Typography>
 
-        <Typography variant="body1" sx={{ mb: 1 }}>
+        <Typography variant="body1" color="textDisabled" sx={{ mb: 1 }}>
           {`Added by ${blog.user.username}`}
         </Typography>
 
@@ -96,6 +96,18 @@ const Blog = ({ blog }) => {
 
           {verifyForDeletion()}
         </Box>
+
+        <br />
+
+        <Typography variant="h6" color="textPrimary" sx={{ mb: 1 }}>
+          comments
+        </Typography>
+
+        <ul>
+          {blog.comments.map((comment, i) => (
+            <li key={i}>{comment}</li>
+          ))}
+        </ul>
       </div>
     </TableContainer>
   );

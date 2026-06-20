@@ -30,6 +30,10 @@ blogsRouter.post("/", userExtractor, async (request, response, next) => {
       blog["likes"] = 0;
     }
 
+    if (!blog.comments) {
+      blog["comments"] = [];
+    }
+
     if (!blog.title || !blog.url) {
       response.status(400).end();
     }
@@ -51,6 +55,15 @@ blogsRouter.post("/", userExtractor, async (request, response, next) => {
       return response.status(401).json({ error: "token invalid" });
     }
   }
+});
+
+blogsRouter.post("/:id/comments", async (request, response, next) => {
+  const blog = await Blog.findById(request.params.id);
+  const commentsArray = blog.comments;
+  commentsArray.push(request.body.comment);
+
+  const updatedBlog = await blog.save();
+  response.status(200).json(updatedBlog);
 });
 
 //delete
