@@ -1,14 +1,23 @@
-import { Box, TableContainer, Paper, Typography, Button } from "@mui/material";
+import {
+  Box,
+  TableContainer,
+  Paper,
+  Typography,
+  Button,
+  TextField,
+} from "@mui/material";
 import NotFound from "./NotFound";
 import { useNavigate } from "react-router-dom";
 import useBlogContext from "../hooks/useBlogContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import blogService from "../services/blogs";
+import { useState } from "react";
 
 const Blog = ({ blog }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user } = useBlogContext();
+  const [comment, setComment] = useState("");
 
   const likeBlogMutation = useMutation({
     mutationFn: blogService.update,
@@ -20,6 +29,11 @@ const Blog = ({ blog }) => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
   });
 
+  const addCommentMutation = useMutation({
+    mutationFn: blogService.addComment,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["blogs"] }),
+  });
+
   if (!blog) return <NotFound />;
 
   const handleLikeUpdate = (blog) => {
@@ -28,6 +42,11 @@ const Blog = ({ blog }) => {
       likes: blog.likes + 1,
     };
     likeBlogMutation.mutate(updatedBlog);
+  };
+
+  const handleAddComment = (event, blog) => {
+    event.preventDefault();
+    addCommentMutation.mutate({ comment, id: blog.id });
   };
 
   const handleDeleteBlog = (blog) => {
@@ -102,6 +121,19 @@ const Blog = ({ blog }) => {
         <Typography variant="h6" color="textPrimary" sx={{ mb: 1 }}>
           comments
         </Typography>
+
+        <form onSubmit={() => handleAddComment(event, blog)}>
+          <TextField
+            required
+            placeholder="add a comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+
+          <Button type="submit" variant="contained" size="small">
+            Add Comment
+          </Button>
+        </form>
 
         <ul>
           {blog.comments.map((comment, i) => (

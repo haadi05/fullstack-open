@@ -36,4 +36,9 @@ const getUser = async () => {
   return response.data;
 };
 
-export default { getAll, post, update, del, setToken, getUser };
+const addComment = async ({ comment, id }) => {
+  const response = await axios.post(`${baseUrl}/${id}/comments`, { comment });
+  return response.data;
+};
+
+export default { getAll, post, update, del, setToken, getUser, addComment };
